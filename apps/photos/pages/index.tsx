@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { useMemoizedFn } from 'ahooks';
+import Logo from 'components/logo';
 import { Timeline } from 'components/timeline';
 import Beian from 'components/备案';
 import { timelineItems } from 'data/images';
@@ -81,6 +82,7 @@ export function Index() {
         {...timelineProps}
         items={timelineItems}
       />
+      <Logo />
       <Beian />
     </div>
   );

@@ -5,7 +5,21 @@ import Image from 'next/image';
 import { ComponentProps, ComponentRef, ForwardedRef, forwardRef } from 'react';
 
 const StyledDivider = styled.div`
-  background-color: #000000;
+  background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 28px,
+      rgba(255, 255, 255, 0.1) 28px,
+      rgba(255, 255, 255, 0.1) 30px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0) 28px,
+      rgba(255, 255, 255, 0.1) 28px,
+      rgba(255, 255, 255, 0.1) 30px
+    ),
+    black;
 `;
 
 function NormalSwitcher({ item }: { item: TimelineItem }) {
