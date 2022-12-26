@@ -6,7 +6,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to photos!</title>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no"
+        />
+        <title>摄影</title>
       </Head>
       <main className="app">
         <Component {...pageProps} />
