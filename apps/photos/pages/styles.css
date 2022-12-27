@@ -1,7 +1,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   font-family: Inter, Helvetica, "Noto Sans CJK SC", "Noto Sans SC", Noto, sans-serif;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 @media screen and (min-width: 1200px) and (max-width: 1439px) {
   html {

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import Info from 'components/info';
 import { TimelineItem } from 'data/images';
 import Image from 'next/image';
 import { ComponentProps, ComponentRef, ForwardedRef, forwardRef } from 'react';
@@ -22,10 +23,36 @@ const StyledDivider = styled.div`
     black;
 `;
 
+const StyledImageContainer = styled.div`
+  position: relative;
+`;
+
 function NormalSwitcher({ item }: { item: TimelineItem }) {
   switch (item.type) {
     case 'image':
-      return <Image src={item.data} alt={`图${item.index}`} quality={100} />;
+      return (
+        <StyledImageContainer
+          css={css(`
+          height: 100vh;
+          width: ${(100 / item.data.height) * item.data.width}vh;
+        `)}
+        >
+          <Image
+            css={css(`
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              user-select: none;
+          `)}
+            src={item.data}
+            alt={`图${item.index + 1}`}
+            quality={100}
+            placeholder="blur"
+            draggable={false}
+          />
+          {item.metadata && <Info metadata={item.metadata} />}
+        </StyledImageContainer>
+      );
     case 'divider':
       return (
         <StyledDivider
@@ -40,7 +67,7 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
 function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
   switch (item.type) {
     case 'image':
-      return <Image src={item.data} alt={`图${item.index}`} quality={75} />;
+      return <Image src={item.data} alt={`图${item.index + 1}`} quality={75} />;
     case 'divider':
       return (
         <StyledDivider
@@ -56,11 +83,6 @@ const StyledTimeline = styled.div`
   display: flex;
   flex-direction: row;
   align-items: stretch;
-
-  & img {
-    width: auto;
-    height: 100%;
-  }
 `;
 
 export interface TimelineProps
