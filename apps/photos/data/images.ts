@@ -45,7 +45,6 @@ export interface ImageItem {
 
 export interface DividerItem {
   type: 'divider';
-  width?: number;
 }
 
 export type TimelineItem = {

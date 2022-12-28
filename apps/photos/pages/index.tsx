@@ -49,10 +49,20 @@ export function Index() {
     <div>
       <Global
         styles={css(`
+          html {
+            scroll-behavior: auto;
+            overscroll-behavior-y: none;
+            overflow-y: hidden;
+          }
           body {
             overflow-y: hidden;
             overflow-x: auto;
             background: black;
+            overscroll-behavior-y: none;
+            /* disable y-axis overscroll */
+            touch-action: pan-x;
+            /* firefox specific */
+            scrollbar-width: none;
           }
           ::-webkit-scrollbar {
             display: none;
@@ -65,6 +75,9 @@ export function Index() {
           left: 0;
           top: 0;
           height: 100vh;
+          height: 100dvh;
+          /* firefox specific */
+          scrollbar-width: none;
         `)}
         items={timelineItems}
       />

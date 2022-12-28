@@ -33,9 +33,11 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
       return (
         <StyledImageContainer
           css={css(`
-          height: 100vh;
-          width: ${(100 / item.data.height) * item.data.width}vh;
-        `)}
+            height: 100vh;
+            height: 100dvh;
+            width: ${(100 / item.data.height) * item.data.width}vh;
+            width: ${(100 / item.data.height) * item.data.width}dvh;
+          `)}
         >
           <Image
             css={css(`
@@ -43,6 +45,7 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
               height: 100%;
               object-fit: cover;
               user-select: none;
+              display: block;
           `)}
             src={item.data}
             alt={`图${item.index + 1}`}
@@ -57,7 +60,12 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
       return (
         <StyledDivider
           css={css(`
-            width: ${item.width ?? 120}px;
+            aspect-ratio: 1 / 12;
+
+            @supports not (aspect-ratio: 1 / 1) {
+              width: 8.333vh;
+              width: 8.333dvh;
+            }
           `)}
         />
       );
@@ -72,7 +80,11 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
       return (
         <StyledDivider
           css={css(`
-            width: calc(${item.width ?? 120}px / 100vh * 32px);
+            aspect-ratio: 1 / 12;
+
+            @supports not (aspect-ratio: 1 / 1) {
+              width: 0.1667rem;
+            }
           `)}
         />
       );
