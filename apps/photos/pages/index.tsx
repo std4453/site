@@ -1,58 +1,24 @@
 import { css, Global } from '@emotion/react';
-import { useMemoizedFn } from 'ahooks';
 import Logo from 'components/logo';
+import { ThumbnailScrollbar } from 'components/thumbnail-scrollbar';
 import { Timeline } from 'components/timeline';
 import Beian from 'components/备案';
 import { timelineItems } from 'data/images';
-import { useControlledScroll } from 'hooks/use-controlled-scroll';
-import { useEffect } from 'react';
-import { isTouchpad, normalizeWheel } from 'utils/scroll';
-
-function useScroll() {
-  const scroll = useControlledScroll();
-
-  const handleWheel = useMemoizedFn((e: WheelEvent) => {
-    if (isTouchpad(e)) {
-      return;
-    }
-
-    // 按宽度比例滚动
-    // 计算方法：一次滚动的 deltaY 约为 120px，我们希望大约能滚动过半张图，这里用元素数量近似
-
-    const speedFactor =
-      document.documentElement.scrollWidth / timelineItems.length / 2 / 120;
-    const { pixelY: deltaY } = normalizeWheel(e);
-    // 降低最大滚动速度
-    const clampedDeltaY =
-      Math.abs(deltaY) > 120 ? (deltaY / Math.abs(deltaY)) * 120 : deltaY;
-
-    scroll.scrollBy(clampedDeltaY * speedFactor, 0);
-
-    // 因为是passive所以不需要preventDefault
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    window.addEventListener('wheel', handleWheel, { passive: true });
-    return () => {
-      window.removeEventListener('wheel', handleWheel);
-    };
-  });
-}
+import { useScrollInteraction } from 'hooks/use-scroll-interaction';
 
 export function Index() {
-  useScroll();
+  useScrollInteraction();
 
   return (
     <div>
       <Global
-        styles={css(`
+        styles={css`
           html {
             scroll-behavior: auto;
             overscroll-behavior-y: none;
             overflow-y: hidden;
+            /* firefox specific */
+            scrollbar-width: none;
           }
           body {
             overflow-y: hidden;
@@ -67,10 +33,10 @@ export function Index() {
           ::-webkit-scrollbar {
             display: none;
           }
-        `)}
+        `}
       />
       <Timeline
-        css={css(`
+        css={css`
           position: absolute;
           left: 0;
           top: 0;
@@ -78,11 +44,12 @@ export function Index() {
           height: 100dvh;
           /* firefox specific */
           scrollbar-width: none;
-        `)}
+        `}
         items={timelineItems}
       />
       <Logo />
       <Beian />
+      <ThumbnailScrollbar />
     </div>
   );
 }

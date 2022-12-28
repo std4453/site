@@ -22,6 +22,8 @@ const 备案Container = styled.div`
       visibility: hidden;
     }
   }
+
+  user-select: none;
 `;
 
 const StyledLink = styled.a`
@@ -39,7 +41,7 @@ const StyledLink = styled.a`
 
 export default function Beian() {
   return (
-    <备案Container>
+    <备案Container draggable="false">
       <StyledLink
         href="https://beian.miit.gov.cn/"
         target="_blank"
@@ -55,6 +57,7 @@ export default function Beian() {
       `)}
         src={备案编号图标}
         alt="备案编号图标"
+        draggable="false"
       ></Image>
       <StyledLink
         href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011002005580"

@@ -12,7 +12,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         />
         <title>摄影</title>
       </Head>
-      <main className="app">
+      <main className="app" draggable="false">
         <Component {...pageProps} />
       </main>
     </>

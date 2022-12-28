@@ -38,6 +38,7 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
             width: ${(100 / item.data.height) * item.data.width}vh;
             width: ${(100 / item.data.height) * item.data.width}dvh;
           `)}
+          draggable="false"
         >
           <Image
             css={css(`
@@ -46,12 +47,12 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
               object-fit: cover;
               user-select: none;
               display: block;
-          `)}
+            `)}
             src={item.data}
             alt={`图${item.index + 1}`}
             quality={100}
             placeholder="blur"
-            draggable={false}
+            draggable="false"
           />
           {item.metadata && <Info metadata={item.metadata} />}
         </StyledImageContainer>
@@ -75,16 +76,39 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
 function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
   switch (item.type) {
     case 'image':
-      return <Image src={item.data} alt={`图${item.index + 1}`} quality={75} />;
+      return (
+        <div
+          css={css(`
+            height: 100%;
+            flex-basis: 0;
+            flex-grow: ${getTimelineItemWidth(item)};
+            overflow: hidden;
+          `)}
+          draggable="false"
+        >
+          <Image
+            css={css(`
+              height: 100%;
+              width: 100%;
+              object-fit: cover;
+              object-position: left 50%;
+              display: block;
+              user-select: none;
+            `)}
+            width={128}
+            src={item.data}
+            alt={`图${item.index + 1}`}
+            quality={75}
+            draggable="false"
+          />
+        </div>
+      );
     case 'divider':
       return (
         <StyledDivider
           css={css(`
-            aspect-ratio: 1 / 12;
-
-            @supports not (aspect-ratio: 1 / 1) {
-              width: 0.1667rem;
-            }
+            flex-basis: 0;
+            flex-grow: ${getTimelineItemWidth(item)};
           `)}
         />
       );
@@ -103,6 +127,15 @@ export interface TimelineProps
   type?: 'normal' | 'thumbnail';
 }
 
+function getTimelineItemWidth(item: TimelineItem) {
+  switch (item.type) {
+    case 'divider':
+      return 1 / 12;
+    case 'image':
+      return item.data.width / item.data.height;
+  }
+}
+
 export const Timeline = forwardRef(function Timeline(
   { items, type = 'normal', ...rest }: TimelineProps,
   ref: ForwardedRef<ComponentRef<typeof StyledTimeline>>
@@ -111,7 +144,13 @@ export const Timeline = forwardRef(function Timeline(
     type
   ];
   return (
-    <StyledTimeline {...rest} ref={ref}>
+    <StyledTimeline
+      {...rest}
+      ref={ref}
+      onDragStart={(e) => {
+        e.preventDefault();
+      }}
+    >
       {items.map((item) => (
         <Switcher item={item} key={item.index} />
       ))}
