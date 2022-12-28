@@ -1,4 +1,5 @@
 import { useMemoizedFn } from 'ahooks';
+import { ControlledScroll } from 'hooks/use-controlled-scroll';
 import { MutableRefObject, useRef, useState } from 'react';
 
 interface DragState {
@@ -9,9 +10,11 @@ interface DragState {
 }
 
 export function useScrollbarDrag({
+  scroll,
   containerRef,
   setLeft,
 }: {
+  scroll: ControlledScroll;
   containerRef: MutableRefObject<HTMLDivElement>;
   setLeft: (percentage: number) => void;
 }) {
@@ -30,21 +33,19 @@ export function useScrollbarDrag({
       startScrollX,
     } = dragStateRef.current;
     const newRatio = startRatio + (e.clientX - startX) / width;
-    const maxRatio =
-      1 - window.innerWidth / document.documentElement.scrollWidth;
+    const maxRatio = scroll.maxScrollX / scroll.scrollWidth;
     const newRatioClamped =
       newRatio < 0 ? 0 : newRatio > maxRatio ? maxRatio : newRatio;
     setLeft(newRatioClamped * 100);
 
     const newScrollX =
-      startScrollX +
-      (newRatioClamped - startRatio) * document.documentElement.scrollWidth;
+      startScrollX + (newRatioClamped - startRatio) * scroll.scrollWidth;
     window.scrollTo({
       left: newScrollX,
       behavior: 'auto',
     });
   });
-  const handleDragEnd = useMemoizedFn((e) => {
+  const handleDragEnd = useMemoizedFn(() => {
     window.removeEventListener('mousemove', handleDrag);
     window.removeEventListener('mouseup', handleDragEnd);
     setDragging(false);
@@ -60,12 +61,12 @@ export function useScrollbarDrag({
     }
 
     const containerRect = containerRef.current.getBoundingClientRect();
-    const startRatio = window.scrollX / document.documentElement.scrollWidth;
+    const startRatio = scroll.scrollX / scroll.scrollWidth;
     dragStateRef.current = {
       containerRect,
       startRatio,
       startX: e.clientX,
-      startScrollX: window.scrollX,
+      startScrollX: scroll.scrollX,
     };
     e.stopImmediatePropagation();
     window.addEventListener('mousemove', handleDrag);

@@ -4,10 +4,13 @@ import { ThumbnailScrollbar } from 'components/thumbnail-scrollbar';
 import { Timeline } from 'components/timeline';
 import Beian from 'components/备案';
 import { timelineItems } from 'data/images';
+import { useControlledScroll } from 'hooks/use-controlled-scroll';
 import { useScrollInteraction } from 'hooks/use-scroll-interaction';
 
 export function Index() {
-  useScrollInteraction();
+  const scroll = useControlledScroll();
+
+  useScrollInteraction(scroll);
 
   return (
     <div>
@@ -49,7 +52,7 @@ export function Index() {
       />
       <Logo />
       <Beian />
-      <ThumbnailScrollbar />
+      <ThumbnailScrollbar scroll={scroll} />
     </div>
   );
 }

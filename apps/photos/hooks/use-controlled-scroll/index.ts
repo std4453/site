@@ -3,7 +3,11 @@ import { useMemo } from 'react';
 
 export interface ControlledScroll {
   get scrollX();
+  get scrollWidth();
+  get maxScrollX();
   get scrollY();
+  get scrollHeight();
+  get maxScrollY();
   scrollTo(x: number, y: number);
   scrollBy(x: number, y: number);
 }
@@ -18,11 +22,35 @@ function useControlledScrollNative(): ControlledScroll {
         }
         return window.scrollX;
       },
+      get scrollWidth() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return document.documentElement.scrollWidth;
+      },
+      get maxScrollX() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return this.scrollWidth - window.innerWidth;
+      },
       get scrollY() {
         if (typeof window === 'undefined') {
           return 0;
         }
         return window.scrollY;
+      },
+      get scrollHeight() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return document.documentElement.scrollHeight;
+      },
+      get maxScrollY() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return this.scrollHeight - window.innerHeight;
       },
       scrollTo(x: number, y: number) {
         window?.scrollTo(x, y);
@@ -200,8 +228,32 @@ function useControlledScrollSimulated(): ControlledScroll {
       get scrollX() {
         return getScrollX();
       },
+      get scrollWidth() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return document.documentElement.scrollWidth;
+      },
+      get maxScrollX() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return this.scrollWidth - window.innerWidth;
+      },
       get scrollY() {
         return getScrollY();
+      },
+      get scrollHeight() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return document.documentElement.scrollHeight;
+      },
+      get maxScrollY() {
+        if (typeof document === 'undefined') {
+          return 0;
+        }
+        return this.scrollHeight - window.innerHeight;
       },
       scrollTo(x: number, y: number) {
         scrollXTo(x);

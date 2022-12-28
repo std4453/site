@@ -1,11 +1,9 @@
 import { useMemoizedFn } from 'ahooks';
-import { useControlledScroll } from 'hooks/use-controlled-scroll';
+import { ControlledScroll } from 'hooks/use-controlled-scroll';
 import { useEffect } from 'react';
 import { isTouchpad, normalizeWheel } from 'utils/scroll';
 
-export function useScrollInteraction() {
-  const scroll = useControlledScroll();
-
+export function useScrollInteraction(scroll: ControlledScroll) {
   const handleWheel = useMemoizedFn((e: WheelEvent) => {
     if (isTouchpad(e)) {
       return;
