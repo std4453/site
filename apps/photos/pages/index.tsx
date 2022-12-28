@@ -6,12 +6,16 @@ import Beian from 'components/备案';
 import { timelineItems } from 'data/images';
 import { useControlledScroll } from 'hooks/use-controlled-scroll';
 import { useEffect } from 'react';
-import { normalizeWheel } from 'utils/scroll';
+import { isTouchpad, normalizeWheel } from 'utils/scroll';
 
 function useScroll() {
   const scroll = useControlledScroll();
 
   const handleWheel = useMemoizedFn((e: WheelEvent) => {
+    if (isTouchpad(e)) {
+      return;
+    }
+
     // 按宽度比例滚动
     // 计算方法：一次滚动的 deltaY 约为 120px，我们希望大约能滚动过半张图，这里用元素数量近似
 

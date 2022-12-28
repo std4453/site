@@ -67,3 +67,12 @@ export function normalizeWheel(
 
   return { spinX: sX, spinY: sY, pixelX: pX, pixelY: pY };
 }
+
+// adapted from https://stackoverflow.com/a/56948026/3871776
+
+// WheelEvent 上没有 wheelDeltaY 这个属性，只能用 any
+export function isTouchpad(e: any) {
+  return e.wheelDeltaY
+    ? Math.abs(e.wheelDeltaY - -3 * e.deltaY) < 3
+    : e.deltaMode === 0;
+}
