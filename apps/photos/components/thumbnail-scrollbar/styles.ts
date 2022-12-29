@@ -20,7 +20,7 @@ export const StyledContainer = styled.div`
   }
 
   @media ${portraitQuery} {
-    --scrollbar-length: calc(100vh - 2.5rem - 0.5rem);
+    --scrollbar-length: calc(100vh - 3.5rem - 0.5rem);
     --scrollbar-thickness: 3rem;
     --scrollbar-width: var(--scrollbar-thickness);
     --scrollbar-height: var(--scrollbar-length);
@@ -55,11 +55,11 @@ export const StyledBg = styled.div`
   pointer-events: none;
 
   opacity: 0;
-  transition: opacity 250ms linear 130ms;
+  transition: opacity 220ms linear 140ms;
   div[data-dragging]:hover &,
   div[data-dragging='true'] & {
     opacity: 1;
-    transition: opacity 100ms linear 0ms;
+    transition: opacity 90ms linear 25ms;
   }
 `;
 
@@ -102,8 +102,8 @@ export const StyledHandle = styled.div`
     right: 0;
     top: 0;
   }
-  transition-duration: 200ms, 330ms;
-  transition-delay: 0ms, 130ms;
+  transition-duration: 200ms, 290ms;
+  transition-delay: 0ms, 160ms;
   transition-timing-function: ease, ease-out;
   div[data-dragging]:hover &,
   div[data-dragging='true'] & {

@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   align-items: center;
   background-color: white;
   padding: 0 0.75rem;
-  height: 2.5rem;
+  height: 3.5rem;
   gap: 0.5rem;
 
   position: fixed;

@@ -6,8 +6,8 @@ const StyledContainer = styled.div`
   top: 0;
   right: 0;
 
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
   background: #ffffff;
 
   display: flex;
@@ -20,8 +20,8 @@ export default function Logo() {
     <StyledContainer>
       <svg
         css={css(`
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 2rem;
+          height: 2rem;
         `)}
         width="24"
         height="24"
