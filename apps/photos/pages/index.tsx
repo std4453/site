@@ -1,40 +1,72 @@
 import { css, Global } from '@emotion/react';
+import Beian from 'components/beian';
 import Logo from 'components/logo';
 import { ThumbnailScrollbar } from 'components/thumbnail-scrollbar';
 import { Timeline } from 'components/timeline';
-import Beian from 'components/备案';
 import { timelineItems } from 'data/images';
 import { useControlledScroll } from 'hooks/use-controlled-scroll';
 import { useScrollInteraction } from 'hooks/use-scroll-interaction';
+import { useMediaQuery } from 'react-responsive';
+import { landscapeQuery, portraitQuery } from 'utils/responsive';
 
 export function Index() {
-  const scroll = useControlledScroll();
+  const isPortrait = useMediaQuery({
+    query: portraitQuery,
+  });
+  const orientation = isPortrait ? 'portrait' : 'landscape';
 
-  useScrollInteraction(scroll);
+  const scroll = useControlledScroll();
+  useScrollInteraction({ scroll, orientation, isTouch: false });
 
   return (
     <div>
       <Global
         styles={css`
-          html {
-            scroll-behavior: auto;
-            overscroll-behavior-y: none;
-            overflow-y: hidden;
-            /* firefox specific */
-            scrollbar-width: none;
-          }
           body {
-            overflow-y: hidden;
-            overflow-x: auto;
             background: black;
-            overscroll-behavior-y: none;
-            /* disable y-axis overscroll */
-            touch-action: pan-x;
-            /* firefox specific */
-            scrollbar-width: none;
           }
-          ::-webkit-scrollbar {
-            display: none;
+
+          @media ${landscapeQuery} {
+            html {
+              scroll-behavior: auto;
+              overscroll-behavior-y: none;
+              overflow-y: hidden;
+              /* firefox specific */
+              scrollbar-width: none;
+            }
+            body {
+              overflow-y: hidden;
+              overflow-x: auto;
+              overscroll-behavior-y: none;
+              /* disable y-axis overscroll */
+              touch-action: pan-x;
+              /* firefox specific */
+              scrollbar-width: none;
+            }
+            ::-webkit-scrollbar {
+              display: none;
+            }
+          }
+          @media ${portraitQuery} {
+            html {
+              scroll-behavior: auto;
+              overscroll-behavior-x: none;
+              overflow-x: hidden;
+              /* firefox specific */
+              scrollbar-width: none;
+            }
+            body {
+              overflow-x: hidden;
+              overflow-y: auto;
+              overscroll-behavior-x: none;
+              /* disable y-axis overscroll */
+              touch-action: pan-y;
+              /* firefox specific */
+              scrollbar-width: none;
+            }
+            ::-webkit-scrollbar {
+              display: none;
+            }
           }
         `}
       />
@@ -52,7 +84,7 @@ export function Index() {
       />
       <Logo />
       <Beian />
-      <ThumbnailScrollbar scroll={scroll} />
+      <ThumbnailScrollbar scroll={scroll} orientation={orientation} />
     </div>
   );
 }

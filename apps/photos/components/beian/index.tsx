@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Image from 'next/image';
-import 备案编号图标 from 'public/备案编号图标.png';
+import BeianIcon from 'public/备案编号图标.png';
+import { portraitQuery } from 'utils/responsive';
 
-const 备案Container = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -17,9 +18,9 @@ const 备案Container = styled.div`
   bottom: 0;
   z-index: 2;
 
-  @media (max-width: 959px) {
+  @media ${portraitQuery} {
     & {
-      visibility: hidden;
+      display: none;
     }
   }
 
@@ -41,7 +42,7 @@ const StyledLink = styled.a`
 
 export default function Beian() {
   return (
-    <备案Container draggable="false">
+    <StyledContainer draggable="false">
       <StyledLink
         href="https://beian.miit.gov.cn/"
         target="_blank"
@@ -55,7 +56,7 @@ export default function Beian() {
         width: 1rem;
         height: 1rem;
       `)}
-        src={备案编号图标}
+        src={BeianIcon}
         alt="备案编号图标"
         draggable="false"
       ></Image>
@@ -67,6 +68,6 @@ export default function Beian() {
       >
         沪公网安备 31011002005580号
       </StyledLink>
-    </备案Container>
+    </StyledContainer>
   );
 }

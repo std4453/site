@@ -3,20 +3,22 @@ import { ControlledScroll } from 'hooks/use-controlled-scroll';
 import { MutableRefObject, useRef, useState } from 'react';
 
 interface DragState {
-  startX: number;
-  startScrollX: number;
+  startClientOffset: number;
+  scrollScrollOffset: number;
   startRatio: number;
-  containerRect: DOMRect;
+  startContainerLength: number;
 }
 
 export function useScrollbarDrag({
   scroll,
   containerRef,
-  setLeft,
+  setOffset: setOffset,
+  orientation,
 }: {
   scroll: ControlledScroll;
   containerRef: MutableRefObject<HTMLDivElement>;
-  setLeft: (percentage: number) => void;
+  setOffset: (percentage: number) => void;
+  orientation: 'landscape' | 'portrait';
 }) {
   const [dragging, setDragging] = useState(false);
 
@@ -27,21 +29,32 @@ export function useScrollbarDrag({
       return;
     }
     const {
-      containerRect: { width },
+      startContainerLength,
       startRatio,
-      startX,
-      startScrollX,
+      startClientOffset,
+      scrollScrollOffset,
     } = dragStateRef.current;
-    const newRatio = startRatio + (e.clientX - startX) / width;
-    const maxRatio = scroll.maxScrollX / scroll.scrollWidth;
+    const newRatio =
+      startRatio +
+      ((orientation === 'landscape' ? e.clientX : e.clientY) -
+        startClientOffset) /
+        startContainerLength;
+    const maxRatio =
+      orientation === 'landscape'
+        ? scroll.maxScrollX / scroll.scrollWidth
+        : scroll.maxScrollY / scroll.scrollHeight;
     const newRatioClamped =
       newRatio < 0 ? 0 : newRatio > maxRatio ? maxRatio : newRatio;
-    setLeft(newRatioClamped * 100);
+    setOffset(newRatioClamped * 100);
 
-    const newScrollX =
-      startScrollX + (newRatioClamped - startRatio) * scroll.scrollWidth;
+    const newScrollOffset =
+      scrollScrollOffset +
+      (newRatioClamped - startRatio) *
+        (orientation === 'landscape'
+          ? scroll.scrollWidth
+          : scroll.scrollHeight);
     window.scrollTo({
-      left: newScrollX,
+      [orientation === 'landscape' ? 'left' : 'top']: newScrollOffset,
       behavior: 'auto',
     });
   });
@@ -61,12 +74,19 @@ export function useScrollbarDrag({
     }
 
     const containerRect = containerRef.current.getBoundingClientRect();
-    const startRatio = scroll.scrollX / scroll.scrollWidth;
+    const startRatio =
+      orientation === 'landscape'
+        ? scroll.scrollX / scroll.scrollWidth
+        : scroll.scrollY / scroll.scrollHeight;
     dragStateRef.current = {
-      containerRect,
+      startContainerLength:
+        orientation === 'landscape'
+          ? containerRect.width
+          : containerRect.height,
       startRatio,
-      startX: e.clientX,
-      startScrollX: scroll.scrollX,
+      startClientOffset: orientation === 'landscape' ? e.clientX : e.clientY,
+      scrollScrollOffset:
+        orientation === 'landscape' ? scroll.scrollX : scroll.scrollY,
     };
     e.stopImmediatePropagation();
     window.addEventListener('mousemove', handleDrag);

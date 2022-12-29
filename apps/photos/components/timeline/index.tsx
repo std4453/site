@@ -4,6 +4,7 @@ import Info from 'components/info';
 import { TimelineItem } from 'data/images';
 import Image from 'next/image';
 import { ComponentProps, ComponentRef, ForwardedRef, forwardRef } from 'react';
+import { landscapeQuery, portraitQuery } from 'utils/responsive';
 
 const StyledDivider = styled.div`
   background: repeating-linear-gradient(
@@ -32,22 +33,42 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
     case 'image':
       return (
         <StyledImageContainer
-          css={css(`
-            height: 100vh;
-            height: 100dvh;
-            width: ${(100 / item.data.height) * item.data.width}vh;
-            width: ${(100 / item.data.height) * item.data.width}dvh;
-          `)}
+          css={css`
+            @media ${landscapeQuery} {
+              height: 100vh;
+              height: 100dvh;
+              width: calc(100vh / var(--image-height) * var(--image-width));
+              width: calc(100dvh / var(--image-height) * var(--image-width));
+            }
+            @media ${portraitQuery} {
+              width: 100vw;
+              height: calc(100vw / var(--image-width) * var(--image-height));
+              max-height: 100vh;
+              max-height: 100dvh;
+            }
+          `}
+          style={
+            {
+              '--image-width': `${item.data.width}`,
+              '--image-height': `${item.data.height}`,
+            } as Record<string, string>
+          }
           draggable="false"
         >
           <Image
-            css={css(`
+            css={css`
               width: 100%;
               height: 100%;
-              object-fit: cover;
               user-select: none;
               display: block;
-            `)}
+
+              @media ${landscapeQuery} {
+                object-fit: cover;
+              }
+              @media ${portraitQuery} {
+                object-fit: contain;
+              }
+            `}
             src={item.data}
             alt={`图${item.index + 1}`}
             quality={100}
@@ -60,14 +81,23 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
     case 'divider':
       return (
         <StyledDivider
-          css={css(`
-            aspect-ratio: 1 / 12;
+          css={css`
+            @media ${landscapeQuery} {
+              aspect-ratio: 1 / 12;
 
-            @supports not (aspect-ratio: 1 / 1) {
-              width: 8.333vh;
-              width: 8.333dvh;
+              @supports not (aspect-ratio: 1 / 1) {
+                width: 8.333vh;
+                width: 8.333dvh;
+              }
             }
-          `)}
+            @media ${portraitQuery} {
+              aspect-ratio: 12 / 1;
+
+              @supports not (aspect-ratio: 1 / 1) {
+                height: 8.333vw;
+              }
+            }
+          `}
         />
       );
   }
@@ -78,12 +108,23 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
     case 'image':
       return (
         <div
-          css={css(`
-            height: 100%;
+          css={css`
             flex-basis: 0;
-            flex-grow: ${getTimelineItemWidth(item)};
             overflow: hidden;
-          `)}
+
+            @media ${landscapeQuery} {
+              flex-grow: calc(var(--image-width) / var(--image-height));
+            }
+            @media ${portraitQuery} {
+              flex-grow: calc(var(--image-height) / var(--image-width));
+            }
+          `}
+          style={
+            {
+              '--image-width': `${item.data.width}`,
+              '--image-height': `${item.data.height}`,
+            } as Record<string, string>
+          }
           draggable="false"
         >
           <Image
@@ -91,9 +132,15 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
               height: 100%;
               width: 100%;
               object-fit: cover;
-              object-position: left 50%;
               display: block;
               user-select: none;
+
+              @media ${landscapeQuery} {
+                object-position: left 50%;
+              }
+              @media ${portraitQuery} {
+                object-position: center center;
+              }
             `)}
             width={128}
             src={item.data}
@@ -106,10 +153,15 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
     case 'divider':
       return (
         <StyledDivider
-          css={css(`
+          css={css`
             flex-basis: 0;
-            flex-grow: ${getTimelineItemWidth(item)};
-          `)}
+            @media ${landscapeQuery} {
+              flex-grow: calc(1 / 12);
+            }
+            @media ${portraitQuery} {
+              flex-grow: calc(1 / 12);
+            }
+          `}
         />
       );
   }
@@ -117,23 +169,20 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
 
 const StyledTimeline = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: stretch;
+
+  @media ${landscapeQuery} {
+    flex-direction: row;
+  }
+  @media ${portraitQuery} {
+    flex-direction: column;
+  }
 `;
 
 export interface TimelineProps
   extends Omit<ComponentProps<typeof StyledTimeline>, 'children'> {
   items: TimelineItem[];
   type?: 'normal' | 'thumbnail';
-}
-
-function getTimelineItemWidth(item: TimelineItem) {
-  switch (item.type) {
-    case 'divider':
-      return 1 / 12;
-    case 'image':
-      return item.data.width / item.data.height;
-  }
 }
 
 export const Timeline = forwardRef(function Timeline(

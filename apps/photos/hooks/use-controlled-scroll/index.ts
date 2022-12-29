@@ -2,12 +2,12 @@ import bezier from 'bezier-easing';
 import { useMemo } from 'react';
 
 export interface ControlledScroll {
-  get scrollX();
-  get scrollWidth();
-  get maxScrollX();
-  get scrollY();
-  get scrollHeight();
-  get maxScrollY();
+  get scrollX(): number;
+  get scrollWidth(): number;
+  get maxScrollX(): number;
+  get scrollY(): number;
+  get scrollHeight(): number;
+  get maxScrollY(): number;
   scrollTo(x: number, y: number);
   scrollBy(x: number, y: number);
 }

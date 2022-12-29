@@ -2,23 +2,34 @@ import { useDebounceFn, useMemoizedFn } from 'ahooks';
 import { useEffect, useRef } from 'react';
 
 export function useScrollBar({
-  setLeft,
-  setWidth,
+  setOffset,
+  setLength,
+  orientation,
 }: {
-  setLeft: (percentage: number) => void;
-  setWidth: (percentage: number) => void;
+  setOffset: (percentage: number) => void;
+  setLength: (percentage: number) => void;
+  orientation: 'landscape' | 'portrait';
 }) {
-  const scrollLeftRef = useRef(
-    typeof window === 'undefined' ? 0 : window.scrollX
+  const scrollStartRef = useRef(
+    typeof window === 'undefined'
+      ? 0
+      : orientation === 'landscape'
+      ? window.scrollX
+      : window.scrollY
   );
 
   const tick = useMemoizedFn(() => {
-    const newScrollLeft = window.scrollX;
-    if (newScrollLeft !== scrollLeftRef.current) {
-      const leftPercentage =
-        (newScrollLeft / document.documentElement.scrollWidth) * 100;
-      setLeft(leftPercentage);
-      scrollLeftRef.current = newScrollLeft;
+    const newScrollOffset =
+      orientation === 'landscape' ? window.scrollX : window.scrollY;
+    if (newScrollOffset !== scrollStartRef.current) {
+      const offsetPercentage =
+        (newScrollOffset /
+          (orientation === 'landscape'
+            ? document.documentElement.scrollWidth
+            : document.documentElement.scrollHeight)) *
+        100;
+      setOffset(offsetPercentage);
+      scrollStartRef.current = newScrollOffset;
     }
 
     requestAnimationFrame(tick);
@@ -31,24 +42,31 @@ export function useScrollBar({
     requestAnimationFrame(tick);
   }, [tick]);
 
-  const updateWidth = useMemoizedFn(() => {
-    const newScrollLeft = window.scrollX;
-    scrollLeftRef.current = newScrollLeft;
-    const newScrollWidth = document.documentElement.scrollWidth;
-    const leftPercentage = (newScrollLeft / newScrollWidth) * 100;
-    const widthPercentage = (window.innerWidth / newScrollWidth) * 100;
-    setLeft(leftPercentage);
-    setWidth(widthPercentage);
+  const updateLength = useMemoizedFn(() => {
+    const newScrollOffset =
+      orientation === 'landscape' ? window.scrollX : window.scrollY;
+    scrollStartRef.current = newScrollOffset;
+    const newScrollLength =
+      orientation === 'landscape'
+        ? document.documentElement.scrollWidth
+        : document.documentElement.scrollHeight;
+    const offsetPercentage = (newScrollOffset / newScrollLength) * 100;
+    const lengthPercentage =
+      ((orientation === 'landscape' ? window.innerWidth : window.innerHeight) /
+        newScrollLength) *
+      100;
+    setOffset(offsetPercentage);
+    setLength(lengthPercentage);
   });
 
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
-    updateWidth();
-  }, [updateWidth]);
+    updateLength();
+  }, [updateLength, orientation]); // 方向变化时也更新
 
-  const { run: updateWidthDebounced } = useDebounceFn(updateWidth, {
+  const { run: updateLengthDebounced } = useDebounceFn(updateLength, {
     wait: 300,
   });
 
@@ -56,9 +74,9 @@ export function useScrollBar({
     if (typeof window === 'undefined') {
       return;
     }
-    window.addEventListener('resize', updateWidthDebounced);
+    window.addEventListener('resize', updateLengthDebounced);
     return () => {
-      window.removeEventListener('resize', updateWidthDebounced);
+      window.removeEventListener('resize', updateLengthDebounced);
     };
-  }, [updateWidthDebounced]);
+  }, [updateLengthDebounced]);
 }
