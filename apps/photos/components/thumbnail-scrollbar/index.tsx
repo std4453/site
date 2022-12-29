@@ -1,8 +1,13 @@
 import { css, Global } from '@emotion/react';
 import { useMemoizedFn } from 'ahooks';
-import { thumbnailScrollbarCSS } from 'components/styles';
-import { Timeline } from 'components/timeline';
-import { timelineItems } from 'data/images';
+import {
+  StyledBg,
+  StyledBgTimeline,
+  StyledContainer,
+  StyledHandle,
+  StyledOffset,
+  StyledTimeline,
+} from './styles';
 import { ControlledScroll } from 'hooks/use-controlled-scroll';
 import { useScrollBar } from 'hooks/use-scrollbar';
 import { useScrollbarDrag } from 'hooks/use-scrollbar-drag';
@@ -86,20 +91,18 @@ export function ThumbnailScrollbar({
           `}
         />
       )}
-      <div
-        css={thumbnailScrollbarCSS}
+      <StyledContainer
         data-dragging={dragging ? 'true' : 'false'}
         ref={containerRef}
         onClick={handleClick}
       >
-        <div id="container2">
-          <Timeline type="thumbnail" items={timelineItems} id="timeline2" />
-        </div>
-        <div id="offset" ref={scrollbarOffsetRef}>
-          <div
+        <StyledBg>
+          <StyledBgTimeline type="thumbnail" />
+        </StyledBg>
+        <StyledOffset ref={scrollbarOffsetRef}>
+          <StyledHandle
             ref={scrollbarLengthRef}
             onMouseDown={handleMouseDown}
-            id="handle"
             draggable="false"
             onDragStart={(e) => {
               e.preventDefault();
@@ -108,15 +111,10 @@ export function ThumbnailScrollbar({
               e.stopPropagation();
             }}
           >
-            <Timeline
-              type="thumbnail"
-              items={timelineItems}
-              ref={timelineRef}
-              id="timeline"
-            />
-          </div>
-        </div>
-      </div>
+            <StyledTimeline type="thumbnail" ref={timelineRef} />
+          </StyledHandle>
+        </StyledOffset>
+      </StyledContainer>
     </>
   );
 }

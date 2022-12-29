@@ -1,9 +1,16 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Info from 'components/info';
-import { TimelineItem } from 'data/images';
+import { TimelineItem, timelineItems } from 'data/images';
 import Image from 'next/image';
-import { ComponentProps, ComponentRef, ForwardedRef, forwardRef } from 'react';
+import {
+  ComponentProps,
+  ComponentRef,
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useState,
+} from 'react';
 import { landscapeQuery, portraitQuery } from 'utils/responsive';
 
 const StyledDivider = styled.div`
@@ -116,7 +123,12 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
               flex-grow: calc(var(--image-width) / var(--image-height));
             }
             @media ${portraitQuery} {
-              flex-grow: calc(var(--image-height) / var(--image-width));
+              flex-grow: calc(
+                min(
+                  var(--image-height) / var(--image-width),
+                  var(--window-height) / var(--window-width)
+                )
+              );
             }
           `}
           style={
@@ -181,17 +193,26 @@ const StyledTimeline = styled.div`
 
 export interface TimelineProps
   extends Omit<ComponentProps<typeof StyledTimeline>, 'children'> {
-  items: TimelineItem[];
+  items?: TimelineItem[];
   type?: 'normal' | 'thumbnail';
 }
 
 export const Timeline = forwardRef(function Timeline(
-  { items, type = 'normal', ...rest }: TimelineProps,
+  { items = timelineItems, type = 'normal', ...rest }: TimelineProps,
   ref: ForwardedRef<ComponentRef<typeof StyledTimeline>>
 ) {
   const Switcher = { normal: NormalSwitcher, thumbnail: ThumbnailSwitcher }[
     type
   ];
+  const [windowWidth, setWindowWidth] = useState(1);
+  const [windowHeight, setWindowHeight] = useState(1);
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    setWindowWidth(window.innerWidth);
+    setWindowHeight(window.innerHeight);
+  }, []);
   return (
     <StyledTimeline
       {...rest}
@@ -199,9 +220,18 @@ export const Timeline = forwardRef(function Timeline(
       onDragStart={(e) => {
         e.preventDefault();
       }}
+      style={
+        {
+          '--window-width': `${windowWidth}`,
+          '--window-height': `${windowHeight}`,
+        } as Record<string, string>
+      }
     >
       {items.map((item) => (
-        <Switcher item={item} key={item.index} />
+        <Switcher
+          item={item}
+          key={item.index}
+        />
       ))}
     </StyledTimeline>
   );
