@@ -2,23 +2,25 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import BeianIcon from 'public/备案编号图标.png';
-import { portraitQuery } from 'utils/responsive';
+import { touchQuery } from 'utils/responsive';
 
 const StyledContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
   background-color: white;
   padding: 0 0.75rem;
   height: 3.5rem;
   gap: 0.5rem;
+  text-align: right;
 
   position: fixed;
   right: 0;
   bottom: 0;
   z-index: 2;
 
-  @media ${portraitQuery} {
+  @media ${touchQuery} {
     & {
       display: none;
     }
@@ -51,21 +53,23 @@ export default function Beian() {
       >
         沪ICP备 2021013570号-1
       </StyledLink>
-      <Image
-        css={css(`
-        width: 1rem;
-        height: 1rem;
-      `)}
-        src={BeianIcon}
-        alt="备案编号图标"
-        draggable="false"
-      ></Image>
       <StyledLink
         href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011002005580"
         target="_blank"
         className="link"
         rel="noreferrer"
       >
+        <Image
+          css={css`
+            width: 1rem;
+            height: 1rem;
+            vertical-align: bottom;
+            margin-right: 0.25rem;
+          `}
+          src={BeianIcon}
+          alt="备案编号图标"
+          draggable="false"
+        ></Image>
         沪公网安备 31011002005580号
       </StyledLink>
     </StyledContainer>

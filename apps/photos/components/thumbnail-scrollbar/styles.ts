@@ -7,7 +7,7 @@ export const StyledContainer = styled.div`
   z-index: 5;
 
   @media ${landscapeQuery} {
-    --scrollbar-length: calc(100vw - 24rem - 0.5rem);
+    --scrollbar-length: calc(100vw - 14.1rem - 0.5rem);
     --scrollbar-thickness: 3rem;
     --scrollbar-width: var(--scrollbar-length);
     --scrollbar-height: var(--scrollbar-thickness);
@@ -20,7 +20,7 @@ export const StyledContainer = styled.div`
   }
 
   @media ${portraitQuery} {
-    --scrollbar-length: calc(100vh - 3.5rem - 0.5rem);
+    --scrollbar-length: calc(100vh - 7rem - 0.5rem);
     --scrollbar-thickness: 3rem;
     --scrollbar-width: var(--scrollbar-thickness);
     --scrollbar-height: var(--scrollbar-length);
@@ -28,13 +28,15 @@ export const StyledContainer = styled.div`
     --handle-width-idle: 0.375rem;
     --handle-width-hover: var(--scrollbar-thickness);
 
-    bottom: 0;
+    bottom: 3.5rem;
     right: 0;
   }
 
   width: var(--scrollbar-width);
   height: var(--scrollbar-height);
   border: 0.25rem solid transparent;
+
+  overflow: hidden;
 
   cursor: pointer;
 
@@ -43,14 +45,37 @@ export const StyledContainer = styled.div`
   }
 `;
 
+export const StyledOverlay = styled.div`
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.2);
+
+  opacity: 0;
+  transition: opacity 250ms 130ms linear;
+  div[data-dragging]:hover &,
+  div[data-dragging='true'] & {
+    opacity: 1;
+    transition: opacity 160ms 0ms linear;
+  }
+
+  pointer-events: none;
+`;
+
 export const StyledBg = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
 
+  z-index: 5;
+
   overflow: hidden;
   border-radius: 0.1875rem;
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: rgba(80, 80, 80, 0.4);
 
   pointer-events: none;
 
@@ -59,17 +84,20 @@ export const StyledBg = styled.div`
   div[data-dragging]:hover &,
   div[data-dragging='true'] & {
     opacity: 1;
-    transition: opacity 90ms linear 25ms;
+    transition: opacity 80ms linear 25ms;
   }
 `;
 
 export const StyledBgTimeline = styled(Timeline)`
-  opacity: 0.18;
+  opacity: 0.35;
   width: 100%;
   height: 100%;
+  filter: grayscale(0.65);
 `;
 
 export const StyledOffset = styled.div`
+  z-index: 6;
+
   position: absolute;
   width: 100%;
   height: 100%;
@@ -110,7 +138,7 @@ export const StyledHandle = styled.div`
     width: var(--handle-width-hover);
     height: var(--handle-height-hover);
     transition-delay: 0ms, 0ms;
-    transition-duration: 200ms, 100ms;
+    transition-duration: 200ms, 80ms;
     transition-timing-function: ease, ease;
   }
 `;
@@ -139,6 +167,6 @@ export const StyledTimeline = styled(Timeline)`
   div[data-dragging]:hover &,
   div[data-dragging='true'] & {
     opacity: 1;
-    transition: opacity 100ms 0ms ease-out;
+    transition: opacity 80ms 0ms ease-out;
   }
 `;

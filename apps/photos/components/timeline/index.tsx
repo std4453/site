@@ -211,8 +211,15 @@ export const Timeline = forwardRef(function Timeline(
     if (typeof window === 'undefined') {
       return;
     }
-    setWindowWidth(window.innerWidth);
-    setWindowHeight(window.innerHeight);
+    function updateWindowSize() {
+      setWindowWidth(window.innerWidth);
+      setWindowHeight(window.innerHeight);
+    }
+    updateWindowSize();
+    window.addEventListener('resize', updateWindowSize);
+    return () => {
+      window.removeEventListener('resize', updateWindowSize);
+    };
   }, []);
   return (
     <StyledTimeline
@@ -229,10 +236,7 @@ export const Timeline = forwardRef(function Timeline(
       }
     >
       {items.map((item) => (
-        <Switcher
-          item={item}
-          key={item.index}
-        />
+        <Switcher item={item} key={item.index} />
       ))}
     </StyledTimeline>
   );

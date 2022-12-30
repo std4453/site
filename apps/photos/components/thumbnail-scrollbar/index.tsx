@@ -6,6 +6,7 @@ import {
   StyledContainer,
   StyledHandle,
   StyledOffset,
+  StyledOverlay,
   StyledTimeline,
 } from './styles';
 import { ControlledScroll } from 'hooks/use-controlled-scroll';
@@ -96,6 +97,7 @@ export function ThumbnailScrollbar({
         ref={containerRef}
         onClick={handleClick}
       >
+        <StyledOverlay />
         <StyledBg>
           <StyledBgTimeline type="thumbnail" />
         </StyledBg>
