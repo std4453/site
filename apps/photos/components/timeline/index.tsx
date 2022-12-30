@@ -159,6 +159,7 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
             alt={`图${item.index + 1}`}
             quality={75}
             draggable="false"
+            loading="eager"
           />
         </div>
       );

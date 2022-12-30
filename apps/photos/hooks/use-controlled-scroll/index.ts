@@ -8,8 +8,20 @@ export interface ControlledScroll {
   get scrollY(): number;
   get scrollHeight(): number;
   get maxScrollY(): number;
-  scrollTo(x: number, y: number);
-  scrollBy(x: number, y: number);
+  scrollTo(
+    x: number,
+    y: number,
+    options?: {
+      automaticDuration?: boolean;
+    }
+  );
+  scrollBy(
+    x: number,
+    y: number,
+    options?: {
+      automaticDuration?: boolean;
+    }
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,9 +107,21 @@ function interp(transition: Transition, ts: DOMHighResTimeStamp) {
   return startValue * (1 - tMapped) + endValue * tMapped;
 }
 
-function useScrollSingleDirection(
-  direction: 'scrollX' | 'scrollY'
-): [() => number, (value: number) => void, (value: number) => void] {
+function useScrollSingleDirection(direction: 'scrollX' | 'scrollY'): [
+  () => number,
+  (
+    value: number,
+    options?: {
+      automaticDuration?: boolean;
+    }
+  ) => void,
+  (
+    value: number,
+    options?: {
+      automaticDuration?: boolean;
+    }
+  ) => void
+] {
   return useMemo(() => {
     function getValue() {
       return typeof window === 'undefined' ? 0 : window[direction];
@@ -154,15 +178,40 @@ function useScrollSingleDirection(
 
     // implementation of CSS transition on scroll values as specified by
     // https://www.w3.org/TR/css-transitions-1/#starting
-    function scrollTo(value: number) {
+    function scrollTo(
+      value: number,
+      {
+        automaticDuration = false,
+      }: {
+        automaticDuration?: boolean;
+      } = {}
+    ) {
       value = clamp(value, 0, getMaxValue());
 
       const now = performance.now();
       const currentValue = getValue();
+
+      const transitionDistance = Math.abs(value - currentValue);
+      // 根据距离计算动画时长：
+      // 1. 缩放不变性：页面整体缩放不改变时长
+      // 2. 平均速度一次导数单调递减
+      // 3. 距离趋于 0 时，时长也趋于 0
+      const baseDistance =
+        window[
+          {
+            scrollX: 'innerWidth',
+            scrollY: 'innerHeight',
+          }[direction]
+        ] * 1.5;
+      const computedDuration =
+        (automaticDuration
+          ? Math.pow(transitionDistance / baseDistance, 1 / 2.5)
+          : 1) * duration;
+
       if (!ongoingTransition) {
         ongoingTransition = {
           startTime: now,
-          endTime: now + duration,
+          endTime: now + computedDuration,
           startValue: currentValue,
           endValue: value,
           reversingAdjustedStartValue: currentValue,
@@ -187,14 +236,14 @@ function useScrollSingleDirection(
             reversingAdjustedStartValue: oldTransition.endTime,
             reversingShorteningFactor,
             startTime: now,
-            endTime: now + duration * reversingShorteningFactor,
+            endTime: now + computedDuration * reversingShorteningFactor,
             startValue: currentValue,
             endValue: value,
           };
         } else {
           ongoingTransition = {
             startTime: now,
-            endTime: now + duration,
+            endTime: now + computedDuration,
             startValue: currentValue,
             endValue: value,
             reversingAdjustedStartValue: currentValue,
@@ -204,11 +253,16 @@ function useScrollSingleDirection(
       }
     }
 
-    function scrollBy(delta: number) {
+    function scrollBy(
+      delta: number,
+      options?: {
+        automaticDuration?: boolean;
+      }
+    ) {
       if (!ongoingTransition) {
-        scrollTo(getValue() + delta);
+        scrollTo(getValue() + delta, options);
       } else {
-        scrollTo(ongoingTransition.endValue + delta);
+        scrollTo(ongoingTransition.endValue + delta, options);
       }
     }
 
@@ -255,13 +309,25 @@ function useControlledScrollSimulated(): ControlledScroll {
         }
         return this.scrollHeight - window.innerHeight;
       },
-      scrollTo(x: number, y: number) {
-        scrollXTo(x);
-        scrollYTo(y);
+      scrollTo(
+        x: number,
+        y: number,
+        options?: {
+          automaticDuration?: boolean;
+        }
+      ) {
+        scrollXTo(x, options);
+        scrollYTo(y, options);
       },
-      scrollBy(x: number, y: number) {
-        scrollXBy(x);
-        scrollYBy(y);
+      scrollBy(
+        x: number,
+        y: number,
+        options?: {
+          automaticDuration?: boolean;
+        }
+      ) {
+        scrollXBy(x, options);
+        scrollYBy(y, options);
       },
     }),
     [getScrollX, getScrollY, scrollXBy, scrollXTo, scrollYBy, scrollYTo]

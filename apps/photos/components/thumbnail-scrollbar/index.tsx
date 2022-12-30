@@ -69,13 +69,13 @@ export function ThumbnailScrollbar({
       const target =
         ((e.clientX - left) / width) * scroll.scrollWidth -
         window.innerWidth / 2;
-      scroll.scrollTo(target, 0);
+      scroll.scrollTo(target, 0, { automaticDuration: true });
     } else {
       const { top, height } = containerRef.current.getBoundingClientRect();
       const target =
         ((e.clientY - top) / height) * scroll.scrollHeight -
         window.innerHeight / 2;
-      scroll.scrollTo(0, target);
+      scroll.scrollTo(0, target, { automaticDuration: true });
     }
   });
 
