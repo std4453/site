@@ -1,4 +1,4 @@
-import { StaticImageData } from 'next/image';
+import { TimelineItem } from 'components/timeline/types';
 import image1 from 'public/images/20170103-IMG_0050.jpg';
 import image2 from 'public/images/20170103-IMG_0063.jpg';
 import image3 from 'public/images/20190702-IMG_0472.jpg';
@@ -23,81 +23,51 @@ import image21 from 'public/images/20221201-IMG_2564.jpg';
 import image22 from 'public/images/20221225-IMG_2660.jpg';
 import image23 from 'public/images/20221225-IMG_2665.jpg';
 
-export interface Metadata {
-  device?: string;
-  lens?: string;
-  iso?: number;
-  f?: number;
-  fStop?: number;
-  shutter?: string;
-
-  subject?: string;
-  time?: string;
-
-  comment?: string;
-}
-
-export interface ImageItem {
-  type: 'image';
-  metadata?: Metadata;
-  data: StaticImageData;
-}
-
-export interface DividerItem {
-  type: 'divider';
-}
-
-export type TimelineItem = {
-  index: number;
-} & (ImageItem | DividerItem);
-
 export const EOS_800D = 'Canon EOS 800D';
 export const EF50_F1_8 = 'EF50mm ƒ1.8 STM';
 
-export const timelineItems: TimelineItem[] = (
-  [
-    { type: 'image', data: image1 },
-    {
-      type: 'image',
-      metadata: {
-        device: EOS_800D,
-        lens: EF50_F1_8,
-        iso: 100,
-        f: 50,
-        fStop: 16,
-        shutter: '0″3',
+export const timelineItems: TimelineItem[] = [
+  { type: 'image', data: image1 },
+  {
+    type: 'image',
+    metadata: {
+      device: EOS_800D,
+      lens: EF50_F1_8,
+      iso: 100,
+      f: 50,
+      fStop: 16,
+      shutter: '0″3',
 
-        subject: '杭州 浙江大学 蓝田二舍',
-        time: '2018/01/13 13:01',
+      subject: '杭州 浙江大学 蓝田二舍',
+      time: '2018/01/13 13:01',
 
-        comment: '蓝天澄澈，工业感的楼梯，线条清晰的建筑，有光也有影',
-      },
-      data: image2,
+      comment: '蓝天澄澈，工业感的楼梯，线条清晰的建筑，有光也有影',
     },
-    { type: 'image', data: image3 },
-    { type: 'image', data: image4 },
-    { type: 'divider' },
-    { type: 'image', data: image5 },
-    { type: 'image', data: image6 },
-    { type: 'image', data: image7 },
-    { type: 'image', data: image8 },
-    { type: 'image', data: image9 },
-    { type: 'image', data: image10 },
-    { type: 'image', data: image11 },
-    { type: 'image', data: image12 },
-    { type: 'image', data: image13 },
-    { type: 'image', data: image14 },
-    { type: 'image', data: image15 },
-    { type: 'image', data: image16 },
-    { type: 'image', data: image17 },
-    { type: 'image', data: image18 },
-    { type: 'image', data: image19 },
-    { type: 'image', data: image20 },
-    { type: 'image', data: image21 },
-    { type: 'image', data: image22 },
-    { type: 'image', data: image23 },
-  ] as (ImageItem | DividerItem)[]
-).map((item, index) => ({
-  index,
-  ...item,
-}));
+    data: image2,
+  },
+  { type: 'image', data: image3 },
+  { type: 'image', data: image4 },
+  { type: 'divider', ratio: 6, portrait: false, style: 'cross' },
+  { type: 'image', data: image5 },
+  { type: 'image', data: image6 },
+  { type: 'image', data: image7 },
+  { type: 'image', data: image8 },
+  { type: 'image', data: image9 },
+  { type: 'divider', ratio: 6, landscape: false, style: 'dots' },
+  { type: 'image', data: image10 },
+  { type: 'divider', ratio: 6, portrait: false, style: 'dots' },
+  { type: 'image', data: image11 },
+  { type: 'image', data: image12 },
+  { type: 'image', data: image13 },
+  { type: 'image', data: image14 },
+  { type: 'image', data: image15 },
+  { type: 'image', data: image16 },
+  { type: 'image', data: image17 },
+  { type: 'image', data: image18 },
+  { type: 'divider', ratio: 6, style: 'cross' },
+  { type: 'image', data: image19 },
+  { type: 'image', data: image20 },
+  { type: 'image', data: image21 },
+  { type: 'image', data: image22 },
+  { type: 'image', data: image23 },
+];

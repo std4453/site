@@ -1,7 +1,8 @@
-import { css } from '@emotion/react';
+import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Info from 'components/info';
-import { TimelineItem, timelineItems } from 'data/images';
+import { TimelineItem } from 'components/timeline/types';
+import { timelineItems } from 'data/images';
 import Image from 'next/image';
 import {
   ComponentProps,
@@ -12,24 +13,6 @@ import {
   useState,
 } from 'react';
 import { landscapeQuery, portraitQuery } from 'utils/responsive';
-
-const StyledDivider = styled.div`
-  background: repeating-linear-gradient(
-      -45deg,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0) 28px,
-      rgba(255, 255, 255, 0.1) 28px,
-      rgba(255, 255, 255, 0.1) 30px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0) 28px,
-      rgba(255, 255, 255, 0.1) 28px,
-      rgba(255, 255, 255, 0.1) 30px
-    ),
-    black;
-`;
 
 const StyledImageContainer = styled.div`
   position: relative;
@@ -77,7 +60,7 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
               }
             `}
             src={item.data}
-            alt={`图${item.index + 1}`}
+            alt={item.metadata?.comment ?? ''}
             quality={100}
             placeholder="blur"
             draggable="false"
@@ -87,25 +70,93 @@ function NormalSwitcher({ item }: { item: TimelineItem }) {
       );
     case 'divider':
       return (
-        <StyledDivider
-          css={css`
-            @media ${landscapeQuery} {
-              aspect-ratio: 1 / 12;
+        <ClassNames>
+          {({ css, cx }) => (
+            <div
+              css={cx(
+                css`
+                  flex-shrink: 0;
 
-              @supports not (aspect-ratio: 1 / 1) {
-                width: 8.333vh;
-                width: 8.333dvh;
-              }
-            }
-            @media ${portraitQuery} {
-              aspect-ratio: 12 / 1;
+                  @media ${landscapeQuery} {
+                    aspect-ratio: 1 / var(--aspect-ratio);
 
-              @supports not (aspect-ratio: 1 / 1) {
-                height: 8.333vw;
+                    @supports not (aspect-ratio: 1 / 1) {
+                      width: calc(100vh / var(--aspect-ratio));
+                      width: calc(100dvh / var(--aspect-ratio));
+                    }
+                  }
+                  @media ${portraitQuery} {
+                    aspect-ratio: var(--aspect-ratio) / 1;
+
+                    @supports not (aspect-ratio: 1 / 1) {
+                      width: calc(100vw / var(--aspect-ratio));
+                    }
+                  }
+                `,
+                {
+                  [css`
+                    @media ${portraitQuery} {
+                      display: none;
+                    }
+                  `]: !(item.portrait ?? true),
+                  [css`
+                    @media ${landscapeQuery} {
+                      display: none;
+                    }
+                  `]: !(item.landscape ?? true),
+                },
+                {
+                  [css`
+                    background: radial-gradient(
+                          circle,
+                          transparent 15%,
+                          black 15%,
+                          black 85%,
+                          transparent 85%,
+                          transparent
+                        ) -15px -15px,
+                      radial-gradient(
+                          circle,
+                          transparent 15%,
+                          black 15%,
+                          black 85%,
+                          transparent 85%,
+                          transparent
+                        )
+                        15px 15px,
+                      linear-gradient(
+                          -45deg,
+                          transparent 47%,
+                          #045541 47%,
+                          #045541 53%,
+                          transparent 53%
+                        )
+                        0 0,
+                      linear-gradient(
+                          45deg,
+                          transparent 47%,
+                          #045541 47%,
+                          #045541 53%,
+                          transparent 53%
+                        )
+                        0 0;
+                    background-color: black;
+                    background-size: 60px 60px, 60px 60px, 30px 30px, 30px 30px;
+                  `]: item.style === 'cross',
+                  [css`
+                    background-color: #000000;
+                    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23045541' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='23' cy='23' r='3'/%3E%3C/g%3E%3C/svg%3E");
+                  `]: item.style === 'dots',
+                }
+              )}
+              style={
+                {
+                  '--aspect-ratio': `${item.ratio}`,
+                } as Record<string, string>
               }
-            }
-          `}
-        />
+            />
+          )}
+        </ClassNames>
       );
   }
 }
@@ -156,7 +207,7 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
             `)}
             width={128}
             src={item.data}
-            alt={`图${item.index + 1}`}
+            alt=""
             quality={75}
             draggable="false"
             loading="eager"
@@ -165,17 +216,37 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
       );
     case 'divider':
       return (
-        <StyledDivider
-          css={css`
-            flex-basis: 0;
-            @media ${landscapeQuery} {
-              flex-grow: calc(1 / 12);
-            }
-            @media ${portraitQuery} {
-              flex-grow: calc(1 / 12);
-            }
-          `}
-        />
+        <ClassNames>
+          {({ css, cx }) => (
+            <div
+              css={cx(
+                css`
+                  background: black;
+                  flex-basis: 0;
+                  flex-grow: calc(1 / var(--aspect-ratio));
+                  flex-grow: calc(1 / var(--aspect-ratio));
+                `,
+                {
+                  [css`
+                    @media ${portraitQuery} {
+                      display: none;
+                    }
+                  `]: !(item.portrait ?? true),
+                  [css`
+                    @media ${landscapeQuery} {
+                      display: none;
+                    }
+                  `]: !(item.landscape ?? true),
+                }
+              )}
+              style={
+                {
+                  '--aspect-ratio': `${item.ratio}`,
+                } as Record<string, string>
+              }
+            />
+          )}
+        </ClassNames>
       );
   }
 }
@@ -235,8 +306,8 @@ export const Timeline = forwardRef(function Timeline(
         } as Record<string, string>
       }
     >
-      {items.map((item) => (
-        <Switcher item={item} key={item.index} />
+      {items.map((item, index) => (
+        <Switcher item={item} key={index} />
       ))}
     </StyledTimeline>
   );
