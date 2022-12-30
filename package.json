@@ -9,6 +9,7 @@
     "@emotion/react": "11.10.5",
     "@emotion/server": "11.10.0",
     "@emotion/styled": "11.10.5",
+    "@next/font": "13.1.1",
     "@nrwl/next": "15.4.1",
     "ahooks": "3.7.3",
     "bezier-easing": "2.1.0",

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Metadata } from 'data/images';
+import { Metadata } from 'components/timeline/types';
 
 const StyledInfoMode = styled.div`
   position: absolute;
