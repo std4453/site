@@ -27,7 +27,23 @@ export const EOS_800D = 'Canon EOS 800D';
 export const EF50_F1_8 = 'EF50mm ƒ1.8 STM';
 
 export const timelineItems: TimelineItem[] = [
-  { type: 'image', data: image1 },
+  {
+    type: 'image',
+    metadata: {
+      device: EOS_800D,
+      lens: EF50_F1_8,
+      iso: 100,
+      f: 50,
+      fStop: 16,
+      shutter: '0″3',
+
+      subject: '杭州 浙江大学 蓝田二舍',
+      time: '2018/01/13 13:01',
+
+      comment: '蓝天澄澈，工业感的楼梯，线条清晰的建筑，有光也有影',
+    },
+    data: image1,
+  },
   {
     type: 'image',
     metadata: {

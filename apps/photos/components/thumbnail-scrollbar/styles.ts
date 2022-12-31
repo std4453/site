@@ -74,7 +74,7 @@ export const StyledBg = styled.div`
   z-index: 5;
 
   overflow: hidden;
-  border-radius: 0.1875rem;
+  border-radius: 0.25rem;
   background-color: rgba(80, 80, 80, 0.4);
 
   pointer-events: none;
@@ -108,7 +108,7 @@ export const StyledHandle = styled.div`
   width: var(--handle-width-idle);
   height: var(--handle-height-idle);
 
-  border-radius: 0.1875rem;
+  border-radius: 0.25rem;
   border: none;
   overflow: hidden;
   position: absolute;

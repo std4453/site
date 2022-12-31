@@ -7,6 +7,7 @@ import { timelineItems } from 'data/images';
 import { useControlledScroll } from 'hooks/use-controlled-scroll';
 import { useScrollInteraction } from 'hooks/use-scroll-interaction';
 import { useMediaQuery } from 'react-responsive';
+import { fontFamily } from 'utils/fonts';
 import { landscapeQuery, portraitQuery } from 'utils/responsive';
 
 export function Index() {
@@ -22,6 +23,10 @@ export function Index() {
     <div>
       <Global
         styles={css`
+          html {
+            font-family: ${fontFamily};
+          }
+
           body {
             background: black;
           }

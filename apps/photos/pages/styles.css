@@ -1,6 +1,5 @@
 html {
   -webkit-text-size-adjust: 100%;
-  font-family: Inter, Helvetica, "Noto Sans CJK SC", "Noto Sans SC", Noto, sans-serif;
   font-size: 16px;
 }
 @media screen and (((min-aspect-ratio: 1/1) and (min-width: 1200px) and (max-width: 1439px)) or ((max-aspect-ratio: 1/1) and (min-height: 1200px) and (max-height: 1439px))) {
