@@ -55,11 +55,11 @@ const StyledInfoBlock = styled.div<{
 
   font-weight: 500;
   color: white;
-  padding: 0.5rem 0.875rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
+  letter-spacing: 0.03em;
 
-  white-space: pre-wrap;
-  max-width: 15.75rem;
+  max-width: 16.25rem;
 
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -115,17 +115,17 @@ const StyledInfoMode = styled.div<{
 const StyledInfoInner = styled.div`
   width: 100%;
   height: 100%;
-  background: black;
+  background: rgba(0, 0, 0, 0.35);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  opacity: 0.25;
+  opacity: 0.71;
   transition: opacity 80ms ease;
 
   &:hover {
-    opacity: 0.35;
+    opacity: 1;
   }
 `;
 
@@ -134,10 +134,11 @@ function InfoMode({ ...rest }: ComponentProps<typeof StyledInfoMode>) {
     <StyledInfoMode {...rest}>
       <StyledInfoInner>
         <svg
-          css={css(`
-          width: 1rem;
-          height: 1rem;
-        `)}
+          css={css`
+            width: 1rem;
+            height: 1rem;
+            opacity: 0.75;
+          `}
           width="12"
           height="12"
           viewBox="0 0 12 12"
@@ -224,7 +225,9 @@ export default function Info({ metadata }: InfoProps) {
                 e.stopPropagation();
               }}
             >
-              {content}
+              {content.split('\n').map((line, index) => (
+                <div key={index}>{line}</div>
+              ))}
             </StyledInfoBlock>
           ))}
         </StyledBlockContainer>
