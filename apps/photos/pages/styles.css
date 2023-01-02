@@ -31,3 +31,9 @@ svg {
   shape-rendering: auto;
   text-rendering: optimizeLegibility;
 }
+/* https: //nextjs.org/docs/api-reference/next/image#known-browser-bugs */
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  img[loading="lazy"] {
+    clip-path: inset(0.6px)
+  }
+}

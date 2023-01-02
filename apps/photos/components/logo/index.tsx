@@ -10,6 +10,8 @@ const StyledContainer = styled.div`
   height: 3.5rem;
   background: #ffffff;
 
+  z-index: 5;
+
   display: flex;
   justify-content: center;
   align-items: center;

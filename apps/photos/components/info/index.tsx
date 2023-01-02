@@ -4,6 +4,7 @@ import { useMemoizedFn } from 'ahooks';
 import { Metadata } from 'components/timeline/types';
 import { ComponentProps, useEffect, useState } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
+import { getMetadataBlocks } from 'utils/metadata';
 import { touchQuery } from 'utils/responsive';
 
 const appearAnimation = keyframes`
@@ -159,27 +160,6 @@ export interface InfoProps {
   metadata?: Metadata;
 }
 
-function getBlocks(metadata: Metadata) {
-  return [
-    [
-      metadata.device,
-      metadata.lens,
-      [
-        metadata.iso ? `ISO${metadata.iso}` : '',
-        metadata.f ? `${metadata.f}mm` : '',
-        metadata.fStop ? `ƒ${metadata.fStop}` : '',
-        metadata.shutter,
-      ]
-        .filter(Boolean)
-        .join(' '),
-    ]
-      .filter(Boolean)
-      .join('\n'),
-    [metadata.subject, metadata.time].filter(Boolean).join('\n'),
-    metadata.comment,
-  ].filter((i): i is string => Boolean(i));
-}
-
 export default function Info({ metadata }: InfoProps) {
   const [expanded, setExpandedInternal] = useState(false);
   const [firstExpanded, setFirstExpanded] = useState(false);
@@ -215,7 +195,7 @@ export default function Info({ metadata }: InfoProps) {
           }}
         />
         <StyledBlockContainer expanded={expanded}>
-          {getBlocks(metadata).map((content, index) => (
+          {getMetadataBlocks(metadata).map((content, index) => (
             <StyledInfoBlock
               key={index}
               index={index}

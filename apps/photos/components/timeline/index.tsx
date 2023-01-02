@@ -1,7 +1,8 @@
 import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Info from 'components/info';
-import { TimelineItem } from 'components/timeline/types';
+import { InfoOverlay } from 'components/info-overlay';
+import { ImageItem, TimelineItem } from 'components/timeline/types';
 import { timelineItems } from 'data/images';
 import Image from 'next/image';
 import {
@@ -18,56 +19,75 @@ const StyledImageContainer = styled.div`
   position: relative;
 `;
 
+function NormalImage({ item }: { item: ImageItem }) {
+  const [opened, setOpened] = useState(false);
+
+  return (
+    <>
+      <StyledImageContainer
+        css={css`
+          @media ${landscapeQuery} {
+            height: 100vh;
+            height: 100dvh;
+            width: calc(100vh / var(--image-height) * var(--image-width));
+            width: calc(100dvh / var(--image-height) * var(--image-width));
+          }
+          @media ${portraitQuery} {
+            width: 100vw;
+            height: calc(100vw / var(--image-width) * var(--image-height));
+            max-height: 100vh;
+            max-height: 100dvh;
+          }
+        `}
+        style={
+          {
+            '--image-width': `${item.data.width}`,
+            '--image-height': `${item.data.height}`,
+          } as Record<string, string>
+        }
+        draggable="false"
+        onClick={() => {
+          if (!opened) {
+            setOpened(true);
+          }
+        }}
+      >
+        <Image
+          css={css`
+            width: 100%;
+            height: 100%;
+            user-select: none;
+            display: block;
+
+            @media ${landscapeQuery} {
+              object-fit: cover;
+            }
+            @media ${portraitQuery} {
+              object-fit: contain;
+            }
+          `}
+          src={item.data}
+          alt={item.metadata?.comment ?? ''}
+          quality={100}
+          placeholder="blur"
+          draggable="false"
+        />
+        {item.metadata && <Info metadata={item.metadata} />}
+      </StyledImageContainer>
+      <InfoOverlay
+        data={item.data}
+        metadata={item.metadata}
+        opened={opened}
+        setOpened={setOpened}
+      />
+    </>
+  );
+}
+
 function NormalSwitcher({ item }: { item: TimelineItem }) {
   switch (item.type) {
     case 'image':
-      return (
-        <StyledImageContainer
-          css={css`
-            @media ${landscapeQuery} {
-              height: 100vh;
-              height: 100dvh;
-              width: calc(100vh / var(--image-height) * var(--image-width));
-              width: calc(100dvh / var(--image-height) * var(--image-width));
-            }
-            @media ${portraitQuery} {
-              width: 100vw;
-              height: calc(100vw / var(--image-width) * var(--image-height));
-              max-height: 100vh;
-              max-height: 100dvh;
-            }
-          `}
-          style={
-            {
-              '--image-width': `${item.data.width}`,
-              '--image-height': `${item.data.height}`,
-            } as Record<string, string>
-          }
-          draggable="false"
-        >
-          <Image
-            css={css`
-              width: 100%;
-              height: 100%;
-              user-select: none;
-              display: block;
-
-              @media ${landscapeQuery} {
-                object-fit: cover;
-              }
-              @media ${portraitQuery} {
-                object-fit: contain;
-              }
-            `}
-            src={item.data}
-            alt={item.metadata?.comment ?? ''}
-            quality={100}
-            placeholder="blur"
-            draggable="false"
-          />
-          {item.metadata && <Info metadata={item.metadata} />}
-        </StyledImageContainer>
-      );
+      return <NormalImage item={item} />;
     case 'divider':
       return (
         <ClassNames>
