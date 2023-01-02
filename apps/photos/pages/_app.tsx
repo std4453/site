@@ -1,8 +1,15 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useEffect } from 'react';
 import './styles.css';
 
 function CustomApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+  }, []);
+
   return (
     <>
       <Head>

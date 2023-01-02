@@ -44,7 +44,7 @@ export function Index() {
               overflow-x: auto;
               overscroll-behavior-y: none;
               /* disable y-axis overscroll */
-              touch-action: pan-x;
+              touch-action: pan-x pinch-zoom;
               /* firefox specific */
               scrollbar-width: none;
             }

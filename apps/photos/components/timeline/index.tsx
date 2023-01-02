@@ -65,12 +65,20 @@ function NormalImage({ item }: { item: ImageItem }) {
             @media ${portraitQuery} {
               object-fit: contain;
             }
+
+            /* https: //nextjs.org/docs/api-reference/next/image#known-browser-bugs */
+            @supports (font: -apple-system-body) and (-webkit-appearance: none) {
+              &[loading='lazy'] {
+                clip-path: inset(0.6px);
+              }
+            }
           `}
           src={item.data}
           alt={item.metadata?.comment ?? ''}
           quality={100}
           placeholder="blur"
           draggable="false"
+          sizes="100vw"
         />
         {item.metadata && <Info metadata={item.metadata} />}
       </StyledImageContainer>

@@ -16,14 +16,18 @@ const StyledOverlay = styled.div<{
   bottom: 0;
 
   z-index: 2;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(0, 0, 0, 0.35);
 
   pointer-events: none;
   user-select: none;
 
   opacity: ${(props) => (props.opened ? 1 : 0)};
   transition: opacity
-    ${(props) => (props.opened ? '60ms linear' : '40ms 80ms linear')};
+    ${(props) => (props.opened ? '60ms linear' : '100ms 50ms linear')};
+
+  @media ${nonTouchQuery} {
+    display: none;
+  }
 `;
 
 const StyledRoot = styled.div<{
@@ -39,9 +43,9 @@ const StyledRoot = styled.div<{
     height: calc(100lvh + 2px);
   }
   @media ${landscapeQuery} {
-    left: 0;
+    left: -1px;
     bottom: 0;
-    width: 100vw;
+    width: calc(100vw + 2px);
     height: 100vh;
     height: 100lvh;
   }
@@ -71,9 +75,10 @@ const StyledRoot = styled.div<{
   transition-property: transform, opacity;
   transition-timing-function: ${(props) =>
       props.opened ? 'ease-out' : 'ease-in'},
-    ${(props) => (props.opened ? 'linear' : 'ease-in')};
-  transition-duration: 120ms, ${(props) => (props.opened ? '60ms' : '80ms')};
-  transition-delay: 0ms, ${(props) => (props.opened ? '0ms' : '40ms')};
+    ${(props) => (props.opened ? 'linear' : 'linear')};
+  transition-duration: ${(props) => (props.opened ? '120ms' : '150ms')},
+    ${(props) => (props.opened ? '60ms' : '100ms')};
+  transition-delay: 0ms, ${(props) => (props.opened ? '0ms' : '50ms')};
 `;
 
 const StyledInner = styled.div<{ opened: boolean }>`
@@ -98,7 +103,7 @@ const StyledInner = styled.div<{ opened: boolean }>`
   transition-property: transform;
   transition-timing-function: ${(props) =>
     props.opened ? 'ease-out' : 'ease-in'};
-  transition-duration: 120ms;
+  transition-duration: ${(props) => (props.opened ? '120ms' : '150ms')};
 `;
 
 const StyledImageContainer = styled.div`
@@ -165,9 +170,9 @@ export function InfoOverlay({
         clearTimeout(timeout);
       };
     } else {
-      setImageLoaded(false);
       const timeout = setTimeout(() => {
         setImageMounted(false);
+        setImageLoaded(false);
       }, 120);
       return () => {
         clearTimeout(timeout);
@@ -184,6 +189,11 @@ export function InfoOverlay({
           setOpened(false);
           e.stopPropagation();
         }}
+        onTouchStart={(e) => {
+          if (opened) {
+            e.preventDefault();
+          }
+        }}
       >
         <StyledInner opened={opened}>
           <StyledImageContainer
@@ -191,23 +201,6 @@ export function InfoOverlay({
               e.stopPropagation();
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              css={css`
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                opacity: ${imageLoaded ? 0 : 1};
-                transition: opacity 100ms linear;
-              `}
-              src={data.blurDataURL}
-              width={data.blurWidth}
-              height={data.blurHeight}
-              alt=""
-            />
             {imageMounted && (
               <Image
                 css={css`
@@ -227,6 +220,34 @@ export function InfoOverlay({
                 }}
               />
             )}
+            <div
+              css={css`
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: ${imageLoaded ? 0 : 1};
+                transition: opacity 100ms linear;
+                background: black;
+              `}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                css={css`
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                `}
+                src={data.blurDataURL}
+                width={data.blurWidth}
+                height={data.blurHeight}
+                alt=""
+              />
+            </div>
           </StyledImageContainer>
           <StyledInfoContainer>
             {getMetadataBlocks(metadata).map((content, index) => (
