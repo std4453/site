@@ -6,11 +6,9 @@ import { isTouchpad, normalizeWheel } from 'utils/scroll';
 export function useScrollInteraction({
   scroll,
   orientation,
-  isTouch,
 }: {
   scroll: ControlledScroll;
   orientation: 'landscape' | 'portrait';
-  isTouch: boolean;
 }) {
   const handleWheel = useMemoizedFn((e: WheelEvent) => {
     if (isTouchpad(e)) {
@@ -40,12 +38,9 @@ export function useScrollInteraction({
     if (typeof window === 'undefined') {
       return;
     }
-    if (isTouch) {
-      return;
-    }
     window.addEventListener('wheel', handleWheel, { passive: true });
     return () => {
       window.removeEventListener('wheel', handleWheel);
     };
-  }, [isTouch, handleWheel]);
+  }, [handleWheel]);
 }

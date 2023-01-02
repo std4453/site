@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Timeline } from 'components/timeline';
-import { landscapeQuery, portraitQuery } from 'utils/responsive';
+import { landscapeQuery, portraitQuery, touchQuery } from 'utils/responsive';
 
 export const StyledContainer = styled.div`
   position: fixed;
@@ -40,7 +40,7 @@ export const StyledContainer = styled.div`
 
   cursor: pointer;
 
-  @media (pointer: coerse) or (pointer: none) {
+  @media ${touchQuery} {
     display: none;
   }
 `;

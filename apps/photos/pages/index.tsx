@@ -17,7 +17,7 @@ export function Index() {
   const orientation = isPortrait ? 'portrait' : 'landscape';
 
   const scroll = useControlledScroll();
-  useScrollInteraction({ scroll, orientation, isTouch: false });
+  useScrollInteraction({ scroll, orientation });
 
   return (
     <div>
