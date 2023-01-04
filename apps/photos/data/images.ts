@@ -43,6 +43,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '太阳还未升起，天光已从建筑之间的缝隙渗出。',
     },
     data: image1,
+    color: '#abb5bf',
   },
   {
     type: 'image',
@@ -60,6 +61,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '蓝天澄澈，工业感的楼梯，线条清晰的建筑，有光也有影。',
     },
     data: image2,
+    color: '#5fa6da',
   },
   {
     type: 'image',
@@ -77,6 +79,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '在 ISO1000 下，出色的色彩纯净度。',
     },
     data: image3,
+    color: '#babbbb',
   },
   {
     type: 'image',
@@ -94,6 +97,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '耳目一新的旧楼改造，后期希望体现出一种赛博朋克的感觉。',
     },
     data: image4,
+    color: '#2d2530',
   },
   { type: 'divider', ratio: 6, portrait: false, style: 'cross' },
   {
@@ -112,6 +116,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '民国风格建筑，东方的新古典主义，和现代设施的结合。',
     },
     data: image5,
+    color: '#8c857f',
   },
   {
     type: 'image',
@@ -128,6 +133,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '虽然画质稀碎，但每人都该体会一次拍月亮的感受。',
     },
     data: image6,
+    color: '#000000',
   },
   {
     type: 'image',
@@ -145,6 +151,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '蟹老板的眼睛，电波发射中。',
     },
     data: image7,
+    color: '#1a86c9',
   },
   {
     type: 'image',
@@ -160,6 +167,7 @@ export const timelineItems: TimelineItem[] = [
       time: '2019/10/02 16:55',
     },
     data: image8,
+    color: '#696969',
   },
   {
     type: 'image',
@@ -177,6 +185,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '意外地整齐的农田。',
     },
     data: image9,
+    color: '#51552c',
   },
   { type: 'divider', ratio: 6, landscape: false, style: 'dots' },
   {
@@ -195,6 +204,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '光圈拉满，小痰盂的画质确实好，清晰又细腻。',
     },
     data: image10,
+    color: '#624e08',
   },
   { type: 'divider', ratio: 6, portrait: false, style: 'dots' },
   {
@@ -213,6 +223,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '你好，罗小黑。',
     },
     data: image11,
+    color: '#493828',
   },
   {
     type: 'image',
@@ -228,6 +239,7 @@ export const timelineItems: TimelineItem[] = [
       time: '2019/10/03 17:06',
     },
     data: image12,
+    color: '#dddee0',
   },
   {
     type: 'image',
@@ -243,6 +255,7 @@ export const timelineItems: TimelineItem[] = [
       time: '2019/10/03 17:20',
     },
     data: image13,
+    color: '#9b9a98',
   },
   {
     type: 'image',
@@ -260,6 +273,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '纯白的灯珠在金属框架上的反射，可能会让游戏引擎犯难。',
     },
     data: image15,
+    color: '#010101',
   },
   {
     type: 'image',
@@ -277,6 +291,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '一位颇具日系风格的同学（喜），出于隐私保护打了码。',
     },
     data: image16,
+    color: '#7e8985',
   },
   {
     type: 'image',
@@ -294,6 +309,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '秋游，潮人观潮。可惜只能远眺，不够震撼。',
     },
     data: image17,
+    color: '#9e9da2',
   },
   {
     type: 'image',
@@ -311,6 +327,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '那个葱色的女人彻底蓝了。\n// TODO: 有空重拍一套',
     },
     data: image18,
+    color: '#0c0b0e',
   },
   { type: 'divider', ratio: 6, style: 'cross' },
   {
@@ -329,6 +346,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '大雪中的一抹暖色，噪点太多了点。',
     },
     data: image19,
+    color: '#648296',
   },
   {
     type: 'image',
@@ -344,6 +362,7 @@ export const timelineItems: TimelineItem[] = [
       time: '2022/12/1 10:50',
     },
     data: image20,
+    color: '#b4b5bb',
   },
   {
     type: 'image',
@@ -361,6 +380,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '提高快门速度，雪粒仿佛静止了一般，这大约是摄影的魅力所在。',
     },
     data: image21,
+    color: '#d3bfb4',
   },
   {
     type: 'image',
@@ -378,6 +398,7 @@ export const timelineItems: TimelineItem[] = [
       comment: '最爱的手办当然要用漂亮的轮廓光点缀。',
     },
     data: image22,
+    color: '#dfdfdf',
   },
   {
     type: 'image',
@@ -395,5 +416,6 @@ export const timelineItems: TimelineItem[] = [
       comment: '前期不清灰，后期火葬场。希望有一天能拍得比公式更好看。',
     },
     data: image23,
+    color: '#dcdcdb',
   },
 ];

@@ -4,7 +4,7 @@ import { landscapeQuery, portraitQuery, touchQuery } from 'utils/responsive';
 
 export const StyledContainer = styled.div`
   position: fixed;
-  z-index: 5;
+  z-index: 7;
 
   @media ${landscapeQuery} {
     --scrollbar-length: calc(100vw - 14.1rem - 0.5rem);

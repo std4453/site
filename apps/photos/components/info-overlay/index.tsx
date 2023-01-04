@@ -1,8 +1,9 @@
-import { css } from '@emotion/react';
+import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
+import { InteractiveImage } from 'components/info-overlay/image';
 import { Metadata } from 'components/timeline/types';
-import Image, { StaticImageData } from 'next/image';
-import { useEffect, useState } from 'react';
+import { StaticImageData } from 'next/image';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { getMetadataBlocks } from 'utils/metadata';
 import { landscapeQuery, nonTouchQuery, portraitQuery } from 'utils/responsive';
 
@@ -37,14 +38,14 @@ const StyledRoot = styled.div<{
 
   @media ${portraitQuery} {
     left: 0;
-    bottom: -1px;
+    top: -1px;
     width: 100vw;
     height: calc(100vh + 2px);
     height: calc(100lvh + 2px);
   }
   @media ${landscapeQuery} {
     left: -1px;
-    bottom: 0;
+    top: 0;
     width: calc(100vw + 2px);
     height: 100vh;
     height: 100lvh;
@@ -53,10 +54,10 @@ const StyledRoot = styled.div<{
   z-index: 3;
 
   user-select: none;
-  pointer-events: ${(props) => (props.opened ? 'auto' : 'none')};
 
   @media ${nonTouchQuery} {
     display: none;
+    pointer-events: none;
   }
 
   background: black;
@@ -114,6 +115,9 @@ const StyledImageContainer = styled.div`
 `;
 
 const StyledInfoContainer = styled.div`
+  @media ${portraitQuery} {
+    min-height: 11.125rem;
+  }
   @media ${landscapeQuery} {
     width: 16rem;
   }
@@ -147,107 +151,82 @@ const StyledInfoBlock = styled.div`
 export function InfoOverlay({
   metadata,
   data,
-
+  background,
   opened,
   setOpened,
 }: {
   metadata: Metadata;
   data: StaticImageData;
-
+  background: string;
   opened: boolean;
   setOpened: (opened: boolean) => void;
 }) {
-  const [imageMounted, setImageMounted] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const animatingRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (opened) {
-      setImageLoaded(false);
+      setTimeout(() => {
+        animatingRef.current = true;
+        setMounted(true);
+      }, 0);
       const timeout = setTimeout(() => {
-        setImageMounted(true);
-      }, 120);
+        animatingRef.current = false;
+      }, 60);
       return () => {
         clearTimeout(timeout);
       };
     } else {
-      const timeout = setTimeout(() => {
-        setImageMounted(false);
-        setImageLoaded(false);
+      animatingRef.current = true;
+      const timeout1 = setTimeout(() => {
+        setMounted(false);
       }, 120);
+      const timeout2 = setTimeout(() => {
+        animatingRef.current = false;
+      }, 60);
       return () => {
-        clearTimeout(timeout);
+        clearTimeout(timeout1);
+        clearTimeout(timeout2);
       };
     }
   }, [opened]);
 
-  return (
+  return opened || mounted ? (
     <>
-      <StyledOverlay opened={opened} />
+      {opened && (
+        <Global
+          styles={css`
+            html {
+              touch-action: none !important;
+            }
+            body {
+              touch-action: none !important;
+            }
+          `}
+        ></Global>
+      )}
+      <StyledOverlay opened={opened && mounted} />
       <StyledRoot
-        opened={opened}
+        opened={opened && mounted}
         onClick={(e) => {
-          setOpened(false);
+          if (opened && !animatingRef.current) {
+            setOpened(false);
+          }
           e.stopPropagation();
         }}
-        onTouchStart={(e) => {
-          if (opened) {
-            e.preventDefault();
-          }
-        }}
       >
-        <StyledInner opened={opened}>
+        <StyledInner opened={opened && mounted}>
           <StyledImageContainer
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            {imageMounted && (
-              <Image
-                css={css`
-                  position: absolute;
-                  left: 0;
-                  top: 0;
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                `}
-                src={data}
-                alt={metadata.comment ?? ''}
-                unoptimized
-                loading="eager"
-                onLoadingComplete={() => {
-                  setImageLoaded(true);
-                }}
-              />
-            )}
-            <div
-              css={css`
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                opacity: ${imageLoaded ? 0 : 1};
-                transition: opacity 100ms linear;
-                background: black;
-              `}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                css={css`
-                  position: absolute;
-                  left: 0;
-                  top: 0;
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                `}
-                src={data.blurDataURL}
-                width={data.blurWidth}
-                height={data.blurHeight}
-                alt=""
-              />
-            </div>
+            <InteractiveImage
+              data={data}
+              alt={metadata.comment ?? ''}
+              mounted={mounted}
+              background={background}
+            />
           </StyledImageContainer>
           <StyledInfoContainer>
             {getMetadataBlocks(metadata).map((content, index) => (
@@ -261,5 +240,5 @@ export function InfoOverlay({
         </StyledInner>
       </StyledRoot>
     </>
-  );
+  ) : null;
 }

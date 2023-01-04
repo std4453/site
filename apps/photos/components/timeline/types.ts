@@ -18,6 +18,7 @@ export interface ImageItem {
   type: 'image';
   metadata?: Metadata;
   data: StaticImageData;
+  color: string;
 }
 
 export interface DividerItem {

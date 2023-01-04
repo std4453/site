@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { landscapeQuery, portraitQuery } from 'utils/responsive';
+import { isTouch, landscapeQuery, portraitQuery } from 'utils/responsive';
 
 const StyledImageContainer = styled.div`
   position: relative;
@@ -38,16 +38,20 @@ function NormalImage({ item }: { item: ImageItem }) {
             max-height: 100vh;
             max-height: 100dvh;
           }
+
+          background: var(--image-color);
         `}
         style={
           {
             '--image-width': `${item.data.width}`,
             '--image-height': `${item.data.height}`,
+            '--image-color': item.color,
           } as Record<string, string>
         }
         draggable="false"
         onClick={() => {
-          if (!opened) {
+          // 非触摸设备不触发
+          if (!opened && isTouch()) {
             setOpened(true);
           }
         }}
@@ -65,18 +69,10 @@ function NormalImage({ item }: { item: ImageItem }) {
             @media ${portraitQuery} {
               object-fit: contain;
             }
-
-            /* https: //nextjs.org/docs/api-reference/next/image#known-browser-bugs */
-            @supports (font: -apple-system-body) and (-webkit-appearance: none) {
-              &[loading='lazy'] {
-                clip-path: inset(0.6px);
-              }
-            }
           `}
           src={item.data}
           alt={item.metadata?.comment ?? ''}
-          quality={100}
-          placeholder="blur"
+          quality={90}
           draggable="false"
           sizes="100vw"
         />
@@ -87,6 +83,7 @@ function NormalImage({ item }: { item: ImageItem }) {
         metadata={item.metadata}
         opened={opened}
         setOpened={setOpened}
+        background={item.color}
       />
     </>
   );
@@ -214,6 +211,7 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
             {
               '--image-width': `${item.data.width}`,
               '--image-height': `${item.data.height}`,
+              '--image-color': item.color,
             } as Record<string, string>
           }
           draggable="false"
