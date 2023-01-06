@@ -2,6 +2,13 @@ export const portraitQuery = `(max-aspect-ratio: 1/1)`;
 
 export const landscapeQuery = `(min-aspect-ratio: 1/1)`;
 
+export function isPortrait() {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return window.innerHeight > window.innerWidth;
+}
+
 export const touchQuery = `(pointer: none), (pointer: coarse)`;
 
 export const nonTouchQuery = `(pointer: fine)`;

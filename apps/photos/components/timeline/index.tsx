@@ -1,5 +1,6 @@
 import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useMemoizedFn } from 'ahooks';
 import Info from 'components/info';
 import { InfoOverlay } from 'components/info-overlay';
 import { ImageItem, TimelineItem } from 'components/timeline/types';
@@ -11,16 +12,57 @@ import {
   ForwardedRef,
   forwardRef,
   useEffect,
+  useRef,
   useState,
 } from 'react';
-import { isTouch, landscapeQuery, portraitQuery } from 'utils/responsive';
+import { isIOS, isSafari } from 'react-device-detect';
+import {
+  isPortrait,
+  isTouch,
+  landscapeQuery,
+  portraitQuery,
+} from 'utils/responsive';
 
 const StyledImageContainer = styled.div`
   position: relative;
 `;
 
 function NormalImage({ item }: { item: ImageItem }) {
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpenedActual] = useState(false);
+  const bodyLockedRef = useRef(false);
+  const previousScrollYRef = useRef(0);
+  const setOpened = useMemoizedFn((newOpened: boolean) => {
+    if (newOpened) {
+      if (!opened && isTouch()) {
+        const needLockBodyScroll = isPortrait() && isIOS && isSafari;
+        if (needLockBodyScroll) {
+          setTimeout(() => {
+            previousScrollYRef.current = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.height = '100%';
+            bodyLockedRef.current = true;
+          }, 100);
+        }
+        setOpenedActual(true);
+      }
+    } else {
+      if (opened) {
+        if (bodyLockedRef.current) {
+          requestAnimationFrame(() => {
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            window.scrollTo(0, previousScrollYRef.current);
+            bodyLockedRef.current = false;
+            setOpenedActual(false);
+          });
+        } else {
+          setOpenedActual(false);
+        }
+      }
+    }
+  });
 
   return (
     <>
@@ -50,10 +92,7 @@ function NormalImage({ item }: { item: ImageItem }) {
         }
         draggable="false"
         onClick={() => {
-          // 非触摸设备不触发
-          if (!opened && isTouch()) {
-            setOpened(true);
-          }
+          setOpened(true);
         }}
       >
         <Image

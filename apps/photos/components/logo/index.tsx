@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { landscapeQuery } from 'utils/responsive';
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -9,6 +10,12 @@ const StyledContainer = styled.div`
   width: 3.5rem;
   height: 3.5rem;
   background: #ffffff;
+  box-sizing: border-box;
+
+  @media ${landscapeQuery} {
+    --right-padding: max(calc(0.5 * env(safe-area-inset-right)), 1.5rem);
+    right: var(--right-padding);
+  }
 
   z-index: 5;
 

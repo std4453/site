@@ -21,7 +21,7 @@ export function InteractiveImage({
     if (mounted) {
       const timeout = setTimeout(() => {
         setImageMounted(true);
-      }, 60);
+      }, 100);
       return () => {
         clearTimeout(timeout);
       };

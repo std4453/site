@@ -1,11 +1,29 @@
-import { css, Global } from '@emotion/react';
+import { css, Global, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { InteractiveImage } from 'components/info-overlay/image';
 import { Metadata } from 'components/timeline/types';
 import { StaticImageData } from 'next/image';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getMetadataBlocks } from 'utils/metadata';
 import { landscapeQuery, nonTouchQuery, portraitQuery } from 'utils/responsive';
+
+const fadeInAnimation = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOutAnimation = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 
 const StyledOverlay = styled.div<{
   opened: boolean;
@@ -22,12 +40,48 @@ const StyledOverlay = styled.div<{
   pointer-events: none;
   user-select: none;
 
-  opacity: ${(props) => (props.opened ? 1 : 0)};
-  transition: opacity
-    ${(props) => (props.opened ? '60ms linear' : '100ms 50ms linear')};
+  animation: ${(props) => (props.opened ? '60ms' : '100ms')} linear
+    ${(props) => (props.opened ? '0ms' : '50ms')} both
+    ${(props) => (props.opened ? fadeInAnimation : fadeOutAnimation)};
 
   @media ${nonTouchQuery} {
     display: none;
+  }
+`;
+
+const rootTransformInAnimationPortrait = keyframes`
+  from {
+    transform: scaleY(0.95) translateY(3vh);
+  }
+  to {
+    transform: scaleY(1) translateY(0);
+  }
+`;
+
+const rootTransformOutAnimationPortrait = keyframes`
+  from {
+    transform: scaleY(1) translateY(0);
+  }
+  to {
+    transform: scaleY(0.95) translateY(3vh);
+  }
+`;
+
+const rootTransformInAnimationLandscape = keyframes`
+  from {
+    transform: scaleX(0.98) translateX(2vw);
+  }
+  to {
+    transform: scaleX(1) translateX(0);
+  }
+`;
+
+const rootTransformOutAnimationLandscape = keyframes`
+  from {
+    transform: scaleX(1) translateX(0);
+  }
+  to {
+    transform: scaleX(0.98) translateX(2vw);
   }
 `;
 
@@ -41,16 +95,18 @@ const StyledRoot = styled.div<{
     top: -1px;
     width: 100vw;
     height: calc(100vh + 2px);
-    height: calc(100lvh + 2px);
+    height: calc(100dvh + 2px);
   }
   @media ${landscapeQuery} {
     left: -1px;
     top: 0;
     width: calc(100vw + 2px);
     height: 100vh;
-    height: 100lvh;
+    /* 横屏不能上下滚动，dvh不会连续变化，保持和当前状态一致 */
+    height: 100dvh;
   }
 
+  box-sizing: border-box;
   z-index: 3;
 
   user-select: none;
@@ -62,24 +118,48 @@ const StyledRoot = styled.div<{
 
   background: black;
 
-  opacity: ${(props) => (props.opened ? 1 : 0)};
   @media ${portraitQuery} {
     transform-origin: top center;
-    transform: ${(props) =>
-      props.opened ? 'scale(1) translateY(0)' : 'scaleY(0.95) translateY(3vh)'};
+    animation: ${(props) => (props.opened ? '120ms' : '150ms')}
+        ${(props) => (props.opened ? 'ease-out' : 'ease-in')} both
+        ${(props) =>
+          props.opened
+            ? rootTransformInAnimationPortrait
+            : rootTransformOutAnimationPortrait},
+      ${(props) => (props.opened ? '60ms' : '100ms')} linear
+        ${(props) => (props.opened ? '0ms' : '50ms')} both
+        ${(props) => (props.opened ? fadeInAnimation : fadeOutAnimation)};
   }
   @media ${landscapeQuery} {
     transform-origin: center right;
-    transform: ${(props) =>
-      props.opened ? 'scale(1) translateX(0)' : 'scaleX(0.98) translateX(2vw)'};
+    animation: ${(props) => (props.opened ? '120ms' : '150ms')}
+        ${(props) => (props.opened ? 'ease-out' : 'ease-in')} both
+        ${(props) =>
+          props.opened
+            ? rootTransformInAnimationLandscape
+            : rootTransformOutAnimationLandscape},
+      ${(props) => (props.opened ? '60ms' : '100ms')} linear
+        ${(props) => (props.opened ? '0ms' : '50ms')} both
+        ${(props) => (props.opened ? fadeInAnimation : fadeOutAnimation)};
   }
-  transition-property: transform, opacity;
-  transition-timing-function: ${(props) =>
-      props.opened ? 'ease-out' : 'ease-in'},
-    ${(props) => (props.opened ? 'linear' : 'linear')};
-  transition-duration: ${(props) => (props.opened ? '120ms' : '150ms')},
-    ${(props) => (props.opened ? '60ms' : '100ms')};
-  transition-delay: 0ms, ${(props) => (props.opened ? '0ms' : '50ms')};
+`;
+
+const innerTransformInAnimationPortrait = keyframes`
+  from {
+    transform: scaleX(0.98);
+  }
+  to {
+    transform: scaleX(1);
+  }
+`;
+
+const innerTransformOutAnimationPortrait = keyframes`
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.98);
+  }
 `;
 
 const StyledInner = styled.div<{ opened: boolean }>`
@@ -99,12 +179,13 @@ const StyledInner = styled.div<{ opened: boolean }>`
 
   transform-origin: center center;
   @media ${portraitQuery} {
-    transform: ${(props) => (props.opened ? 'scaleX(1)' : 'scaleX(0.98)')};
+    animation: ${(props) => (props.opened ? '120ms' : '150ms')}
+      ${(props) => (props.opened ? 'ease-out' : 'ease-in')} both
+      ${(props) =>
+        props.opened
+          ? innerTransformInAnimationPortrait
+          : innerTransformOutAnimationPortrait};
   }
-  transition-property: transform;
-  transition-timing-function: ${(props) =>
-    props.opened ? 'ease-out' : 'ease-in'};
-  transition-duration: ${(props) => (props.opened ? '120ms' : '150ms')};
 `;
 
 const StyledImageContainer = styled.div`
@@ -115,11 +196,9 @@ const StyledImageContainer = styled.div`
 `;
 
 const StyledInfoContainer = styled.div`
-  @media ${portraitQuery} {
-    min-height: 11.125rem;
-  }
   @media ${landscapeQuery} {
-    width: 16rem;
+    --right-padding: max(calc(0.5 * env(safe-area-inset-right)), 1.5rem);
+    width: calc(14.5rem + var(--right-padding));
   }
   flex-shrink: 0;
 
@@ -132,7 +211,7 @@ const StyledInfoContainer = styled.div`
     justify-content: flex-start;
   }
   @media ${landscapeQuery} {
-    padding: 1rem 1.5rem 1.5rem 1rem;
+    padding: 1rem var(--right-padding) 1.5rem 1rem;
     justify-content: flex-end;
   }
   gap: 0.5rem;
@@ -164,12 +243,12 @@ export function InfoOverlay({
   const [mounted, setMounted] = useState(false);
   const animatingRef = useRef(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (opened) {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         animatingRef.current = true;
         setMounted(true);
-      }, 0);
+      });
       const timeout = setTimeout(() => {
         animatingRef.current = false;
       }, 60);
@@ -180,7 +259,7 @@ export function InfoOverlay({
       animatingRef.current = true;
       const timeout1 = setTimeout(() => {
         setMounted(false);
-      }, 120);
+      }, 180);
       const timeout2 = setTimeout(() => {
         animatingRef.current = false;
       }, 60);
@@ -205,9 +284,9 @@ export function InfoOverlay({
           `}
         ></Global>
       )}
-      <StyledOverlay opened={opened && mounted} />
+      <StyledOverlay opened={opened} />
       <StyledRoot
-        opened={opened && mounted}
+        opened={opened}
         onClick={(e) => {
           if (opened && !animatingRef.current) {
             setOpened(false);
@@ -215,7 +294,7 @@ export function InfoOverlay({
           e.stopPropagation();
         }}
       >
-        <StyledInner opened={opened && mounted}>
+        <StyledInner opened={opened}>
           <StyledImageContainer
             onClick={(e) => {
               e.stopPropagation();

@@ -724,12 +724,12 @@ class PinchZoom extends React.Component<Props> {
   private _bindEvents() {
     const { current: div } = this._containerRef;
 
-    // if (window.ResizeObserver) {
-    //   this._containerObserver = new ResizeObserver(this._onResize);
-    //   this._containerObserver.observe(div);
-    // } else {
-    //   window.addEventListener('resize', this._onResize);
-    // }
+    if (window.ResizeObserver) {
+      this._containerObserver = new ResizeObserver(this._onResize);
+      this._containerObserver.observe(div);
+    } else {
+      window.addEventListener('resize', this._onResize);
+    }
 
     this._handlers.forEach(([eventName, fn, target]) => {
       (target || div).addEventListener(eventName, fn, true);
@@ -745,12 +745,12 @@ class PinchZoom extends React.Component<Props> {
   private _unSubscribe() {
     const { current: div } = this._containerRef;
 
-    // if (this._containerObserver) {
-    //   this._containerObserver.disconnect();
-    //   this._containerObserver = null;
-    // }
+    if (this._containerObserver) {
+      this._containerObserver.disconnect();
+      this._containerObserver = null;
+    }
 
-    // window.removeEventListener('resize', this._onResize);
+    window.removeEventListener('resize', this._onResize);
 
     this._handlers.forEach(([eventName, fn, target]) => {
       (target || div).removeEventListener(eventName, fn, true);
