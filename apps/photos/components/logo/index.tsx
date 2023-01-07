@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
 
   @media ${landscapeQuery} {
-    --right-padding: max(calc(0.5 * env(safe-area-inset-right)), 1.5rem);
+    --right-padding: calc(0.5 * env(safe-area-inset-right));
     right: var(--right-padding);
   }
 
