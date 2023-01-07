@@ -14,11 +14,16 @@ export interface Metadata {
   comment?: string;
 }
 
+/** [x1, y1, x2, y2] */
+export type FocusArea = [number, number, number, number];
+
 export interface ImageItem {
   type: 'image';
   metadata?: Metadata;
   data: StaticImageData;
-  color: string;
+  background: string;
+  size: [number, number];
+  focusArea: FocusArea;
 }
 
 export interface DividerItem {

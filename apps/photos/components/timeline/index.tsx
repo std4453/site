@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useMemoizedFn } from 'ahooks';
 import Info from 'components/info';
 import { InfoOverlay } from 'components/info-overlay';
-import { ImageItem, TimelineItem } from 'components/timeline/types';
+import { FocusArea, ImageItem, TimelineItem } from 'components/timeline/types';
 import { timelineItems } from 'data/images';
 import Image from 'next/image';
 import {
@@ -12,10 +12,11 @@ import {
   ForwardedRef,
   forwardRef,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
-import { isIOS, isSafari } from 'react-device-detect';
+import { isIOS } from 'react-device-detect';
 import {
   isPortrait,
   isTouch,
@@ -34,7 +35,8 @@ function NormalImage({ item }: { item: ImageItem }) {
   const setOpened = useMemoizedFn((newOpened: boolean) => {
     if (newOpened) {
       if (!opened && isTouch()) {
-        const needLockBodyScroll = isPortrait() && isIOS && isSafari;
+        // iOS端始终锁定缩放，安卓端可能有问题
+        const needLockBodyScroll = isPortrait() && isIOS;
         if (needLockBodyScroll) {
           setTimeout(() => {
             previousScrollYRef.current = window.scrollY;
@@ -64,6 +66,17 @@ function NormalImage({ item }: { item: ImageItem }) {
     }
   });
 
+  // next/image得到的data.width和data.height有时不同于原图，这里按比例缩放
+  const focusArea = useMemo(
+    (): FocusArea => [
+      (item.focusArea[0] / item.size[0]) * item.data.width,
+      (item.focusArea[1] / item.size[1]) * item.data.height,
+      (item.focusArea[2] / item.size[0]) * item.data.width,
+      (item.focusArea[3] / item.size[1]) * item.data.height,
+    ],
+    [item]
+  );
+
   return (
     <>
       <StyledImageContainer
@@ -87,7 +100,7 @@ function NormalImage({ item }: { item: ImageItem }) {
           {
             '--image-width': `${item.data.width}`,
             '--image-height': `${item.data.height}`,
-            '--image-color': item.color,
+            '--image-color': item.background,
           } as Record<string, string>
         }
         draggable="false"
@@ -122,7 +135,8 @@ function NormalImage({ item }: { item: ImageItem }) {
         metadata={item.metadata}
         opened={opened}
         setOpened={setOpened}
-        background={item.color}
+        background={item.background}
+        focusArea={focusArea}
       />
     </>
   );
@@ -250,7 +264,7 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
             {
               '--image-width': `${item.data.width}`,
               '--image-height': `${item.data.height}`,
-              '--image-color': item.color,
+              '--image-color': item.background,
             } as Record<string, string>
           }
           draggable="false"

@@ -1,7 +1,7 @@
 import { css, Global, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { InteractiveImage } from 'components/info-overlay/image';
-import { Metadata } from 'components/timeline/types';
+import { FocusArea, Metadata } from 'components/timeline/types';
 import { StaticImageData } from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { getMetadataBlocks } from 'utils/metadata';
@@ -95,7 +95,7 @@ const StyledRoot = styled.div<{
     top: -1px;
     width: 100vw;
     height: calc(100vh + 2px);
-    height: calc(100dvh + 2px);
+    height: calc(100svh + 2px);
   }
   @media ${landscapeQuery} {
     left: -1px;
@@ -233,12 +233,14 @@ export function InfoOverlay({
   background,
   opened,
   setOpened,
+  focusArea,
 }: {
   metadata: Metadata;
   data: StaticImageData;
   background: string;
   opened: boolean;
   setOpened: (opened: boolean) => void;
+  focusArea: FocusArea;
 }) {
   const [mounted, setMounted] = useState(false);
   const animatingRef = useRef(false);
@@ -305,6 +307,7 @@ export function InfoOverlay({
               alt={metadata.comment ?? ''}
               mounted={mounted}
               background={background}
+              focusArea={focusArea}
             />
           </StyledImageContainer>
           <StyledInfoContainer>

@@ -53,7 +53,7 @@ export interface DefaultProps {
 
   contentWidth: number;
   contentHeight: number;
-  initialScale: number;
+  focusArea: [number, number, number, number];
 
   _document: Document;
 }

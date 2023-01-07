@@ -138,7 +138,7 @@ class PinchZoom extends React.Component<Props> {
 
     contentWidth: 0,
     contentHeight: 0,
-    initialScale: 1,
+    focusArea: [0, 0, 0, 0],
     initialZoomMode: 'fill',
   };
 
@@ -684,7 +684,12 @@ class PinchZoom extends React.Component<Props> {
   private _getContainerRect(): ClientRect {
     const { current: div } = this._containerRef;
 
-    return div.getBoundingClientRect();
+    const rect = div.getBoundingClientRect();
+    // getBoundingClientRect会计算transform，这里用scrollWidth和scrollHeight规避
+    // https://stackoverflow.com/questions/23392926/ignore-transitions-when-measuring-an-elements-dimensions
+    rect.width = div.parentElement.scrollWidth;
+    rect.height = div.parentElement.scrollHeight;
+    return rect;
   }
 
   private _getChildSize(): { width: number; height: number } {
@@ -700,6 +705,47 @@ class PinchZoom extends React.Component<Props> {
     return getElementSize(div?.firstElementChild as HTMLElement | null);
   }
 
+  /**
+   * 给定图片尺寸（w0/h0）、关注区域（x1/y1/w1/h1）、和视窗尺寸（w2/h2），尽可能将关注区域放入视窗，缩放比例越小越好
+   * 输出最终的视窗区域（xf/yf/wf/hf），不能改变长宽比，且结果不超出图片范围
+   */
+  private _computeFocus({
+    w0,
+    h0,
+    x1,
+    y1,
+    w1,
+    h1,
+    w2,
+    h2,
+  }: {
+    w0: number;
+    h0: number;
+    x1: number;
+    y1: number;
+    w1: number;
+    h1: number;
+    w2: number;
+    h2: number;
+  }): {
+    xf: number;
+    yf: number;
+    wf: number;
+    hf: number;
+  } {
+    const wh1 = w1;
+    const wv1 = (w2 * h1) / h2;
+    const wh0 = w0;
+    const wv0 = (w2 * h0) / h2;
+
+    const wf = Math.min(Math.max(wh1, wv1), Math.min(wh0, wv0));
+    const hf = (wf / w2) * h2;
+    const xf = clamp(0, w0 - wf, x1 + (w1 - wf) / 2);
+    const yf = clamp(0, h0 - hf, y1 + (h1 - hf) / 2);
+
+    return { xf, yf, wf, hf };
+  }
+
   private _updateInitialZoomFactor() {
     const rect = this._getContainerRect();
     const size = this._getChildSize();
@@ -707,16 +753,41 @@ class PinchZoom extends React.Component<Props> {
     const yZoomFactor = rect.height / size.height;
 
     this._initialZoomFactor =
-      this.props.initialScale *
-      (this.props.initialZoomMode === 'fill'
+      this.props.initialZoomMode === 'fill'
         ? min(xZoomFactor, yZoomFactor)
-        : max(xZoomFactor, yZoomFactor));
+        : max(xZoomFactor, yZoomFactor);
+  }
+
+  private _updateFocus() {
+    const rect = this._getContainerRect();
+    const size = this._getChildSize();
+
+    const { xf, yf, wf } = this._computeFocus({
+      w0: size.width,
+      h0: size.height,
+      x1: this.props.focusArea[0],
+      y1: this.props.focusArea[1],
+      w1: this.props.focusArea[2] - this.props.focusArea[0],
+      h1: this.props.focusArea[3] - this.props.focusArea[1],
+      w2: rect.width,
+      h2: rect.height,
+    });
+    this._initialZoomFactor = rect.width / wf;
+    this._initialOffset = {
+      x: xf * this._initialZoomFactor,
+      y: yf * this._initialZoomFactor,
+    };
+
+    this._isOffsetsSet = true;
+
+    this._resetOffset();
   }
 
   private _onResize = () => {
     if (this._containerRef?.current) {
-      this._updateInitialZoomFactor();
-      this._setupOffsets();
+      this._updateFocus();
+      // this._updateInitialZoomFactor();
+      // this._setupOffsets();
       this._update();
     }
   };

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { useMemoizedFn } from 'ahooks';
+import { FocusArea } from 'components/timeline/types';
 import Image, { StaticImageData } from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import QuickPinchZoom, { make2dTransformValue } from './quick-pinch-zoom';
@@ -9,11 +10,13 @@ export function InteractiveImage({
   alt,
   mounted,
   background,
+  focusArea,
 }: {
   data: StaticImageData;
   alt?: string;
   mounted: boolean;
   background: string;
+  focusArea: FocusArea;
 }) {
   const [imageMounted, setImageMounted] = useState(false);
 
@@ -53,7 +56,7 @@ export function InteractiveImage({
       initialZoomMode="cover"
       contentWidth={data.width}
       contentHeight={data.height}
-      initialScale={1.2}
+      focusArea={focusArea}
     >
       <div
         ref={imgRef}
