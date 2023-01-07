@@ -1,6 +1,7 @@
 import { css, Global, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { InteractiveImage } from 'components/info-overlay/image';
+import Thumbnail, { ThumbnailActions } from 'components/info-overlay/thumbnail';
 import { FocusArea, Metadata } from 'components/timeline/types';
 import { StaticImageData } from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -272,6 +273,9 @@ export function InfoOverlay({
     }
   }, [opened]);
 
+  const imageContainerRef = useRef<HTMLDivElement>();
+  const thumbnailRef = useRef<ThumbnailActions>();
+
   return opened || mounted ? (
     <>
       {opened && (
@@ -301,6 +305,7 @@ export function InfoOverlay({
             onClick={(e) => {
               e.stopPropagation();
             }}
+            ref={imageContainerRef}
           >
             <InteractiveImage
               data={data}
@@ -308,9 +313,16 @@ export function InfoOverlay({
               mounted={mounted}
               background={background}
               focusArea={focusArea}
+              thumbnailRef={thumbnailRef}
             />
           </StyledImageContainer>
           <StyledInfoContainer>
+            <Thumbnail
+              contentWidth={data.width}
+              contentHeight={data.height}
+              ref={thumbnailRef}
+              imageRef={imageContainerRef}
+            />
             {getMetadataBlocks(metadata).map((content, index) => (
               <StyledInfoBlock key={index}>
                 {content.split('\n').map((line, index) => (

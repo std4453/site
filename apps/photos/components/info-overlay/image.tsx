@@ -1,8 +1,9 @@
 import { css } from '@emotion/react';
 import { useMemoizedFn } from 'ahooks';
+import { ThumbnailActions } from 'components/info-overlay/thumbnail';
 import { FocusArea } from 'components/timeline/types';
 import Image, { StaticImageData } from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import QuickPinchZoom, { make2dTransformValue } from './quick-pinch-zoom';
 
 export function InteractiveImage({
@@ -11,12 +12,14 @@ export function InteractiveImage({
   mounted,
   background,
   focusArea,
+  thumbnailRef,
 }: {
   data: StaticImageData;
   alt?: string;
   mounted: boolean;
   background: string;
   focusArea: FocusArea;
+  thumbnailRef: MutableRefObject<ThumbnailActions>;
 }) {
   const [imageMounted, setImageMounted] = useState(false);
 
@@ -42,6 +45,7 @@ export function InteractiveImage({
 
     const value = make2dTransformValue({ x, y, scale });
     imgRef.current.style.transform = value;
+    thumbnailRef.current?.update?.({ x, y, scale });
   });
 
   return mounted ? (
@@ -57,6 +61,10 @@ export function InteractiveImage({
       contentWidth={data.width}
       contentHeight={data.height}
       focusArea={focusArea}
+      doubleTapZoomOutOnMaxScale
+      maxZoom={3}
+      minZoom={1}
+      zoomOutFactor={1.05}
     >
       <div
         ref={imgRef}

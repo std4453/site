@@ -363,11 +363,13 @@ class PinchZoom extends React.Component<Props> {
     this._resetOffset();
   }
 
-  private _sanitizeOffset(offset: Point) {
+  private _sanitizeOffset(offset: Point, zoomFactor = this._zoomFactor) {
     const rect = this._getContainerRect();
     const { width, height } = this._getChildSize();
-    const elWidth = width * this._getInitialZoomFactor() * this._zoomFactor;
-    const elHeight = height * this._getInitialZoomFactor() * this._zoomFactor;
+    const elWidth =
+      width * this._getInitialZoomFactor() * Math.max(1, zoomFactor);
+    const elHeight =
+      height * this._getInitialZoomFactor() * Math.max(1, zoomFactor);
     const maxX = elWidth - rect.width + this.props.horizontalPadding;
     const maxY = elHeight - rect.height + this.props.verticalPadding;
     const maxOffsetX = max(maxX, 0);
@@ -550,9 +552,7 @@ class PinchZoom extends React.Component<Props> {
   }
 
   private _sanitize() {
-    if (this._zoomFactor < this.props.zoomOutFactor) {
-      this._zoomOutAnimation();
-    } else if (this._isInsaneOffset()) {
+    if (this._isInsaneOffset()) {
       this._sanitizeOffsetAnimation();
     }
   }
@@ -561,18 +561,40 @@ class PinchZoom extends React.Component<Props> {
     const offset = this._offset;
     const sanitizedOffset = this._sanitizeOffset(offset);
 
-    return sanitizedOffset.x !== offset.x || sanitizedOffset.y !== offset.y;
+    return (
+      this._zoomFactor < 1 ||
+      sanitizedOffset.x !== offset.x ||
+      sanitizedOffset.y !== offset.y
+    );
   }
 
   private _sanitizeOffsetAnimation() {
-    const targetOffset = this._sanitizeOffset(this._offset);
-    const startOffset: Point = { ...this._offset };
-    const updateProgress = (progress: number) => {
-      const x = startOffset.x + progress * (targetOffset.x - startOffset.x);
-      const y = startOffset.y + progress * (targetOffset.y - startOffset.y);
+    const startZoomFactor = this._zoomFactor;
+    const zoomFactor = Math.max(this._zoomFactor, 1);
 
-      this._offset = { x, y };
-      this._update();
+    const size = this._getChildSize();
+    const targetOffset = this._sanitizeOffset(this._offset, zoomFactor);
+    const targetCenter = this._getCurrentZoomCenter(targetOffset, zoomFactor);
+    const startCenter = this._getCurrentZoomCenter();
+    const updateProgress = (progress: number) => {
+      const scaleFactor =
+        startZoomFactor + progress * (zoomFactor - startZoomFactor);
+
+      const centerX =
+        startCenter.x + progress * (targetCenter.x - startCenter.x);
+      const centerY =
+        startCenter.y + progress * (targetCenter.y - startCenter.y);
+
+      this._scaleZoomFactor(scaleFactor / this._zoomFactor);
+      this._offset = {
+        x:
+          centerX -
+          (size.width * this._getInitialZoomFactor() * scaleFactor) / 2,
+        y:
+          centerY -
+          (size.height * this._getInitialZoomFactor() * scaleFactor) / 2,
+      };
+      this._update({ isAnimation: true });
     };
 
     this._animate(updateProgress);
@@ -600,14 +622,15 @@ class PinchZoom extends React.Component<Props> {
     return this._initialZoomFactor;
   }
 
-  private _getCurrentZoomCenter() {
-    const { x, y } = this._offset;
-    const offsetLeft = x - this._initialOffset.x;
-    const offsetTop = y - this._initialOffset.y;
+  private _getCurrentZoomCenter(
+    { x, y }: Point = this._offset,
+    zoomFactor = this._zoomFactor
+  ) {
+    const size = this._getChildSize();
 
     return {
-      x: -1 * x - offsetLeft / (1 / this._zoomFactor - 1),
-      y: -1 * y - offsetTop / (1 / this._zoomFactor - 1),
+      x: x + (size.width * this._getInitialZoomFactor() * zoomFactor) / 2,
+      y: y + (size.height * this._getInitialZoomFactor() * zoomFactor) / 2,
     };
   }
 
@@ -772,15 +795,26 @@ class PinchZoom extends React.Component<Props> {
       w2: rect.width,
       h2: rect.height,
     });
-    this._initialZoomFactor = rect.width / wf;
+
+    const xZoomFactor = rect.width / size.width;
+    const yZoomFactor = rect.height / size.height;
+    this._initialZoomFactor =
+      this.props.initialZoomMode === 'fill'
+        ? min(xZoomFactor, yZoomFactor)
+        : max(xZoomFactor, yZoomFactor);
+    this._zoomFactor = rect.width / wf / this._initialZoomFactor;
+    const x = (size.width * this._getInitialZoomFactor() - rect.width) / 2;
+    const y = (size.height * this._getInitialZoomFactor() - rect.height) / 2;
     this._initialOffset = {
-      x: xf * this._initialZoomFactor,
-      y: yf * this._initialZoomFactor,
+      x,
+      y,
+    };
+    this._offset = {
+      x: xf * this._zoomFactor * this._initialZoomFactor,
+      y: yf * this._zoomFactor * this._initialZoomFactor,
     };
 
     this._isOffsetsSet = true;
-
-    this._resetOffset();
   }
 
   private _onResize = () => {
@@ -873,7 +907,7 @@ class PinchZoom extends React.Component<Props> {
     const interaction = this._interaction;
 
     if (interaction !== newInteraction) {
-      if (interaction && !newInteraction) {
+      if (interaction) {
         if (isZoomInteraction(interaction)) {
           this._handleZoomEnd();
         } else if (isDragInteraction(interaction)) {
@@ -881,10 +915,12 @@ class PinchZoom extends React.Component<Props> {
         }
       }
 
-      if (isZoomInteraction(newInteraction)) {
-        this._handleZoomStart();
-      } else if (isDragInteraction(newInteraction)) {
-        this._handleDragStart(event);
+      if (!interaction) {
+        if (isZoomInteraction(newInteraction)) {
+          this._handleZoomStart();
+        } else if (isDragInteraction(newInteraction)) {
+          this._handleDragStart(event);
+        }
       }
     }
 
@@ -948,7 +984,7 @@ class PinchZoom extends React.Component<Props> {
 
   private _handlerOnTouchEnd = this._handlerIfEnable(
     (touchEndEvent: TouchEvent) => {
-      this._fingers = touchEndEvent.touches.length;
+      this._fingers = 0;
 
       if (
         this.props.shouldCancelHandledTouchEndEvents &&
