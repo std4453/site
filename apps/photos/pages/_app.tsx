@@ -1,6 +1,7 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useEffect } from 'react';
+import Script from 'next/script';
 import './styles.css';
 
 function CustomApp({ Component, pageProps }: AppProps) {
@@ -38,6 +39,19 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Head>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-MWG0KKWMQS"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-MWG0KKWMQS');
+        `}
+      </Script>
       <main draggable="false">
         <Component {...pageProps} />
       </main>
