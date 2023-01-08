@@ -20,6 +20,9 @@ const nextConfig = {
     locales: ['zh'],
     defaultLocale: 'zh',
   },
+  sentry: {
+    hideSourceMaps: false,
+  },
 };
 
 const withPWA = require('next-pwa')({

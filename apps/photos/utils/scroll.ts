@@ -7,7 +7,11 @@ const PAGE_HEIGHT = 800;
 
 export function normalizeWheel(
   event: WheelEvent & {
-    HORIZONTAL_AXIS?: any;
+    HORIZONTAL_AXIS?: number;
+    wheelDelta?: number;
+    wheelDeltaY?: number;
+    wheelDeltaX?: number;
+    axis?: number;
   }
 ) {
   let sX = 0,
