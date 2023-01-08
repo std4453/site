@@ -2,6 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withNx } = require('@nrwl/next/plugins/with-nx');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 /**
  * @type {import('@nrwl/next/plugins/with-nx').WithNxOptions}
@@ -26,4 +27,6 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 });
 
-module.exports = withPWA(withNx(nextConfig));
+module.exports = withSentryConfig(withPWA(withNx(nextConfig)), {
+  silent: true,
+});

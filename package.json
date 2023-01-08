@@ -11,6 +11,7 @@
     "@emotion/styled": "11.10.5",
     "@next/font": "13.1.1",
     "@nrwl/next": "15.4.2",
+    "@sentry/nextjs": "7.29.0",
     "ahooks": "3.7.3",
     "bezier-easing": "2.1.0",
     "core-js": "^3.6.5",
