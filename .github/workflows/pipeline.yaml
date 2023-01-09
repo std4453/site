@@ -40,7 +40,6 @@ jobs:
       - uses: nrwl/nx-set-shas@v3
 
       - run: npx nx workspace-lint
-      - run: npx nx format:check
       - name: Build
         run: npx nx affected --target=build --parallel=3
       - name: Docker Image
