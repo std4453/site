@@ -16,10 +16,6 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
-  i18n: {
-    locales: ['zh'],
-    defaultLocale: 'zh',
-  },
   sentry: {
     hideSourceMaps: false,
   },
