@@ -13,9 +13,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  images: {
-    formats: ['image/avif', 'image/webp'],
-  },
   sentry: {
     hideSourceMaps: false,
   },
