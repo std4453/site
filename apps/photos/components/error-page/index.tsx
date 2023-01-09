@@ -1,9 +1,8 @@
 import { css, Global } from '@emotion/react';
-import { useMemoizedFn } from 'ahooks';
 import Logo from 'components/logo';
 import Image from 'next/image';
 import moon from 'public/images/image_2924-Moon-Dust-Cloud.png';
-import { MouseEvent, ReactNode, TouchEvent, useRef } from 'react';
+import { ReactNode } from 'react';
 import { fontFamily } from 'utils/fonts';
 
 export interface ErrorPageProps {
@@ -24,28 +23,6 @@ export function ErrorPage({
   actionText = null,
   onActionButtonClick,
 }: ErrorPageProps) {
-  const moonRef = useRef<HTMLDivElement>();
-  const imageRef = useRef<HTMLImageElement>();
-  const handleMoonMouseDown = useMemoizedFn((e: MouseEvent | TouchEvent) => {
-    if (!moonRef.current || !imageRef.current) {
-      return;
-    }
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    const rect = moonRef.current.getBoundingClientRect();
-    const cx = (clientX - rect.x) / rect.width;
-    const cy = (clientY - rect.y) / rect.height;
-    imageRef.current.style.transformOrigin = `${cx * 100}% ${cy * 100}%`;
-    imageRef.current.style.transform = 'scale(0.8)';
-  });
-  const handleMoonMouseUp = useMemoizedFn(() => {
-    if (!moonRef.current || !imageRef.current) {
-      return;
-    }
-    imageRef.current.style.transformOrigin = `50% 50%`;
-    imageRef.current.style.transform = 'scale(1)';
-  });
-
   return (
     <>
       <Global
@@ -110,11 +87,6 @@ export function ErrorPage({
               user-select: none;
               -webkit-tap-highlight-color: transparent;
             `}
-            ref={moonRef}
-            onTouchStart={handleMoonMouseDown}
-            onMouseDown={handleMoonMouseDown}
-            onMouseUp={handleMoonMouseUp}
-            onTouchEnd={handleMoonMouseUp}
             draggable="false"
           >
             <Image
@@ -124,10 +96,7 @@ export function ErrorPage({
                 display: block;
                 object-fit: contain;
                 pointer-events: none;
-                transform-origin: center center;
-                transition: transform 100ms ease, transform-origin 70ms linear;
               `}
-              ref={imageRef}
               src={moon}
               alt={'"Moon" by Gregory H. Revera / CC BY-SA 3.0'}
             />
