@@ -57,6 +57,26 @@
       "options": {
         "lintFilePatterns": ["apps/photos/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "engine": "docker",
+        "metadata": {
+          "images": [
+            "ghcr.io/std4453/site-photos"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=sha,prefix=sha-"
+          ]
+        },
+        "load": true,
+        "push": true
+      }
     }
   },
   "tags": []

@@ -37,6 +37,8 @@
     "@nrwl/react": "15.4.1",
     "@nrwl/web": "15.4.1",
     "@nrwl/workspace": "15.4.1",
+    "@nx-tools/container-metadata": "^4.0.2",
+    "@nx-tools/nx-container": "^4.0.2",
     "@testing-library/react": "13.4.0",
     "@types/jest": "28.1.1",
     "@types/next-pwa": "5.6.1",
