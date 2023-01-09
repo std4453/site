@@ -74,7 +74,6 @@
             "type=sha,prefix=sha-"
           ]
         },
-        "load": true,
         "push": true
       }
     }
