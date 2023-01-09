@@ -7,6 +7,7 @@ on:
 
 jobs:
   main:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,7 +27,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: "yarn"
-          node-version-file: ".nvmrc"
       - name: "Install Dependencies"
         run: yarn --frozen-lockfile
 
@@ -34,5 +34,7 @@ jobs:
 
       - run: npx nx workspace-lint
       - run: npx nx format:check
-      - run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx affected --target=build --parallel=3
-      - run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx affected --target=container --parallel=3
+      - name: Build
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx affected --target=build --parallel=3
+      - name: Docker Image
+        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx affected --target=container --parallel=3
