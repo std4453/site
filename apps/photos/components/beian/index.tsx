@@ -1,7 +1,5 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import Image from 'next/image';
-import BeianIcon from 'public/备案编号图标.png';
 import { touchQuery } from 'utils/responsive';
 
 const StyledContainer = styled.div`
@@ -59,17 +57,18 @@ export default function Beian() {
         className="link"
         rel="noreferrer"
       >
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           css={css`
             width: 1rem;
             height: 1rem;
             vertical-align: bottom;
             margin-right: 0.25rem;
           `}
-          src={BeianIcon}
+          src="/beian-number-icon.png"
           alt="备案编号图标"
           draggable="false"
-        ></Image>
+        />
         沪公网安备 31011002005580号
       </StyledLink>
     </StyledContainer>
