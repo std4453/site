@@ -33,7 +33,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="摄影" />
-        <meta name="description" content="std4453的摄影作品" />
+        <meta name="description" content="一个前端开发者的摄影作品展示。" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
