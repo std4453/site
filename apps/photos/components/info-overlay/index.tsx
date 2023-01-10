@@ -97,6 +97,8 @@ const StyledRoot = styled.div<{
     width: 100vw;
     height: calc(100vh + 2px);
     height: calc(100svh + 2px);
+
+    z-index: 9;
   }
   @media ${landscapeQuery} {
     left: -1px;
@@ -105,10 +107,11 @@ const StyledRoot = styled.div<{
     height: 100vh;
     /* 横屏不能上下滚动，dvh不会连续变化，保持和当前状态一致 */
     height: 100dvh;
+
+    z-index: 3;
   }
 
   box-sizing: border-box;
-  z-index: 3;
 
   user-select: none;
 
@@ -248,8 +251,8 @@ export function InfoOverlay({
 
   useEffect(() => {
     if (opened) {
+      animatingRef.current = true;
       requestAnimationFrame(() => {
-        animatingRef.current = true;
         setMounted(true);
       });
       const timeout = setTimeout(() => {
@@ -259,7 +262,6 @@ export function InfoOverlay({
         clearTimeout(timeout);
       };
     } else {
-      animatingRef.current = true;
       const timeout1 = setTimeout(() => {
         setMounted(false);
       }, 180);
@@ -295,6 +297,7 @@ export function InfoOverlay({
         opened={opened}
         onClick={(e) => {
           if (opened && !animatingRef.current) {
+            animatingRef.current = true;
             setOpened(false);
           }
           e.stopPropagation();
@@ -310,10 +313,11 @@ export function InfoOverlay({
             <InteractiveImage
               data={data}
               alt={metadata.comment ?? ''}
-              mounted={mounted}
               background={background}
               focusArea={focusArea}
               thumbnailRef={thumbnailRef}
+              animatingRef={animatingRef}
+              opened={opened}
             />
           </StyledImageContainer>
           <StyledInfoContainer>

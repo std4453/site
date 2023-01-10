@@ -44,6 +44,11 @@ export function Index() {
               overflow-x: auto;
               overscroll-behavior-y: none;
               /* disable y-axis overscroll */
+              /* 
+                有一个已知 bug，为了 a11y 在 meta 里允许 user-scalable，同时也
+                因为 Chrome 上横竖屏变化时会有问题，这里允许 pinch-zoom，但用户在
+                放大之后因为没有 pan-y 所以没法竖向滚动
+              */
               touch-action: pan-x pinch-zoom;
               /* firefox specific */
               scrollbar-width: none;

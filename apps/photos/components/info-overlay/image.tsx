@@ -9,30 +9,30 @@ import QuickPinchZoom, { make2dTransformValue } from './quick-pinch-zoom';
 export function InteractiveImage({
   data,
   alt,
-  mounted,
   background,
   focusArea,
   thumbnailRef,
+  animatingRef,
+  opened,
 }: {
   data: StaticImageData;
   alt?: string;
-  mounted: boolean;
   background: string;
   focusArea: FocusArea;
   thumbnailRef: MutableRefObject<ThumbnailActions>;
+  animatingRef: MutableRefObject<boolean>;
+  opened: boolean;
 }) {
   const [imageMounted, setImageMounted] = useState(false);
 
   useEffect(() => {
-    if (mounted) {
-      const timeout = setTimeout(() => {
-        setImageMounted(true);
-      }, 100);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-  }, [mounted]);
+    const timeout = setTimeout(() => {
+      setImageMounted(true);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const [loaded, setLoaded] = useState(false);
 
@@ -42,13 +42,16 @@ export function InteractiveImage({
     if (!imgRef.current) {
       return;
     }
+    if (!opened && animatingRef.current) {
+      return;
+    }
 
     const value = make2dTransformValue({ x, y, scale });
     imgRef.current.style.transform = value;
     thumbnailRef.current?.update?.({ x, y, scale });
   });
 
-  return mounted ? (
+  return (
     <QuickPinchZoom
       onUpdate={onUpdate}
       containerProps={{
@@ -102,5 +105,5 @@ export function InteractiveImage({
         )}
       </div>
     </QuickPinchZoom>
-  ) : null;
+  );
 }

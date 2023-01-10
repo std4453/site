@@ -152,7 +152,7 @@ export default forwardRef(function Thumbnail(
         margin-top: 3.5rem;
         margin-bottom: 0.25rem;
 
-        animation: 150ms linear 80ms both ${fadeInAnimation};
+        animation: 150ms linear 130ms both ${fadeInAnimation};
 
         display: flex;
         flex-direction: column;

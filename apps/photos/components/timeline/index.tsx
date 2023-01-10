@@ -28,7 +28,7 @@ const StyledImageContainer = styled.div`
   position: relative;
 `;
 
-function NormalImage({ item }: { item: ImageItem }) {
+function NormalImage({ item, index }: { item: ImageItem; index: number }) {
   const [opened, setOpenedActual] = useState(false);
   const bodyLockedRef = useRef(false);
   const previousScrollYRef = useRef(0);
@@ -44,24 +44,20 @@ function NormalImage({ item }: { item: ImageItem }) {
             document.body.style.width = '100%';
             document.body.style.height = '100%';
             bodyLockedRef.current = true;
-          }, 100);
+          }, 140);
         }
         setOpenedActual(true);
       }
     } else {
       if (opened) {
         if (bodyLockedRef.current) {
-          requestAnimationFrame(() => {
-            document.body.style.position = '';
-            document.body.style.width = '';
-            document.body.style.height = '';
-            window.scrollTo(0, previousScrollYRef.current);
-            bodyLockedRef.current = false;
-            setOpenedActual(false);
-          });
-        } else {
-          setOpenedActual(false);
+          document.body.style.position = '';
+          document.body.style.width = '';
+          document.body.style.height = '';
+          window.scrollTo(0, previousScrollYRef.current);
+          bodyLockedRef.current = false;
         }
+        setOpenedActual(false);
       }
     }
   });
@@ -127,6 +123,7 @@ function NormalImage({ item }: { item: ImageItem }) {
           quality={90}
           draggable="false"
           sizes="100vw"
+          priority={index < 3}
         />
         {item.metadata && <Info metadata={item.metadata} />}
       </StyledImageContainer>
@@ -142,10 +139,16 @@ function NormalImage({ item }: { item: ImageItem }) {
   );
 }
 
-function NormalSwitcher({ item }: { item: TimelineItem }) {
+function NormalSwitcher({
+  item,
+  index,
+}: {
+  item: TimelineItem;
+  index: number;
+}) {
   switch (item.type) {
     case 'image':
-      return <NormalImage item={item} />;
+      return <NormalImage item={item} index={index} />;
     case 'divider':
       return (
         <ClassNames>
@@ -284,7 +287,7 @@ function ThumbnailSwitcher({ item }: { item: TimelineItem }) {
                 object-position: center center;
               }
             `)}
-            width={128}
+            width={90}
             src={item.data}
             alt=""
             quality={75}
@@ -386,7 +389,7 @@ export const Timeline = forwardRef(function Timeline(
       }
     >
       {items.map((item, index) => (
-        <Switcher item={item} key={index} />
+        <Switcher item={item} key={index} index={index} />
       ))}
     </StyledTimeline>
   );
