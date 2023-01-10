@@ -47,6 +47,16 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+        <meta property="og:title" content="摄影 - std4453" />
+        <meta
+          property="og:description"
+          content="一个前端开发者的摄影作品展示。"
+        />
+        <meta property="og:url" content="https://photos.std4453.com/" />
+        <meta property="og:type" content="website"></meta>
+        <meta property="og:locale" content="zh_CN" />
+        <meta property="og:image" content="/og-image.png" />
       </Head>
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-MWG0KKWMQS"
