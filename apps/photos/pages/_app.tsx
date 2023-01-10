@@ -9,6 +9,15 @@ function CustomApp({ Component, pageProps }: AppProps) {
     if (typeof window === 'undefined') {
       return;
     }
+
+    console.log(
+      '觉得不错？你可以为我点个 star: https://github.com/std4453/site'
+    );
+    console.log('如果你发现了任何 bug，请务必提个 issue 告诉我！');
+    console.log(
+      '顺带一提，这个网站支持手机、平板、PC，横竖都能用，也许有更多隐藏功能等你发现？'
+    );
+    console.log('Made with ❤️️ by std4453 (me@std4453.com)');
   }, []);
 
   return (
