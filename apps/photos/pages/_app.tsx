@@ -56,7 +56,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="https://photos.std4453.com/" />
         <meta property="og:type" content="website"></meta>
         <meta property="og:locale" content="zh_CN" />
-        <meta property="og:image" content="/og-image.png" />
+        <meta
+          property="og:image"
+          content="https://photos.std4453.com/og-image.png"
+        />
       </Head>
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-MWG0KKWMQS"
