@@ -77,10 +77,10 @@
           "tags": [
             "type=schedule",
             "type=ref,event=branch",
+            "type=ref,event=branch,suffix=-build-$INPUT_RUN_NUMBER",
             "type=ref,event=tag",
             "type=ref,event=pr",
-            "type=sha,prefix=sha-",
-            "build-$INPUT_RUN_NUMBER"
+            "type=sha,prefix=sha-"
           ]
         },
         "push": true
