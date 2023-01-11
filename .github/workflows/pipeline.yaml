@@ -43,4 +43,7 @@ jobs:
       - name: Build
         run: npx nx affected --target=build --parallel=3
       - name: Docker Image
-        run: INPUT_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx nx affected --target=container --parallel=3
+        run: npx nx affected --target=container --parallel=3
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_RUN_NUMBER: ${{ github.run_number }}
