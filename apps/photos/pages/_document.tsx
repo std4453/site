@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document';
+import 'sharp';
 
 export default function Document() {
   return (
