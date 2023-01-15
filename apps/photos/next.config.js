@@ -26,16 +26,6 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 });
 
-// There's currently no native way to specify environment variables from nx
-// project.json, one should add ANALYZE to .env.local
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled:
-    process.env.ANALYZE === 'true' && process.env.NODE_ENV !== 'development',
+module.exports = withSentryConfig(withPWA(withNx(nextConfig)), {
+  silent: true,
 });
-
-module.exports = withSentryConfig(
-  withBundleAnalyzer(withPWA(withNx(nextConfig))),
-  {
-    silent: true,
-  }
-);

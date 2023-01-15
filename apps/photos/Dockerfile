@@ -15,6 +15,8 @@ ENV PORT 3000
 WORKDIR /usr/src/app
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=deps /usr/src/app/package.json ./package.json
+COPY dist/apps/photos/next.config.js ./next.config.js
+COPY dist/apps/photos/with-nx.js ./with-nx.js
 COPY dist/apps/photos/public ./public
 COPY dist/apps/photos/.next ./.next
 RUN chown -R node:node .
