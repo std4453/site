@@ -42,6 +42,7 @@ export const StyledContainer = styled.div`
 
   @media ${touchQuery} {
     display: none;
+    visibility: hidden;
   }
 `;
 

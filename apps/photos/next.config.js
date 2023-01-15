@@ -14,7 +14,10 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats:
+      process.env.NEXT_USE_AVIF === 'true'
+        ? ['image/avif', 'image/webp']
+        : ['image/webp'],
   },
   sentry: {
     hideSourceMaps: false,
