@@ -23,28 +23,37 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        {/* https://stackoverflow.com/a/44680066/3871776 */}
+        {/* 安卓横屏不加mininum-scale就一堆问题 */}
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover"
+          content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover"
         />
+
         <title>摄影 - std4453</title>
 
+        {/* standalone模式相关 */}
         <meta name="application-name" content="摄影" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="摄影" />
-        <meta name="description" content="一个前端开发者的摄影作品展示。" />
-        <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="apple-mobile-web-app-title" content="摄影" />
 
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
+        {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="format-detection" content="telephone=no" />
 
+        {/* favicon */}
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
+        {/* SEO */}
+        <meta name="description" content="一个前端开发者的摄影作品展示。" />
         <meta property="og:title" content="摄影 - std4453" />
         <meta
           property="og:description"
@@ -58,6 +67,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
           content="https://photos.std4453.com/og-image.png"
         />
       </Head>
+      {/* gtag */}
       <Script
         src="https://www.googletagmanager.com/gtag/js?id=G-MWG0KKWMQS"
         strategy="afterInteractive"

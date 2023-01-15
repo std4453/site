@@ -70,7 +70,7 @@ export function Index() {
               overflow-y: auto;
               overscroll-behavior-x: none;
               /* disable y-axis overscroll */
-              touch-action: pan-y;
+              touch-action: pan-y pinch-zoom;
               /* firefox specific */
               scrollbar-width: none;
             }

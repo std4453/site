@@ -16,7 +16,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { isIOS } from 'react-device-detect';
+import { isAndroid, isIOS } from 'react-device-detect';
 import {
   isPortrait,
   isTouch,
@@ -32,17 +32,23 @@ function NormalImage({ item, index }: { item: ImageItem; index: number }) {
   const [opened, setOpenedActual] = useState(false);
   const bodyLockedRef = useRef(false);
   const previousScrollYRef = useRef(0);
+  // 解决方案参考: https://github.com/willmcpo/body-scroll-lock
   const setOpened = useMemoizedFn((newOpened: boolean) => {
     if (newOpened) {
       if (!opened && isTouch()) {
         // iOS端始终锁定缩放，安卓端可能有问题
-        const needLockBodyScroll = isPortrait() && isIOS;
+        const needLockBodyScroll = isPortrait();
         if (needLockBodyScroll) {
           setTimeout(() => {
             previousScrollYRef.current = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.height = '100%';
+            if (isIOS) {
+              document.body.style.position = 'fixed';
+              document.body.style.width = '100%';
+              document.body.style.height = '100%';
+            } else if (isAndroid) {
+              document.body.style.overflow = 'hidden';
+            }
+            // 其他设备不支持
             bodyLockedRef.current = true;
           }, 140);
         }
@@ -51,9 +57,13 @@ function NormalImage({ item, index }: { item: ImageItem; index: number }) {
     } else {
       if (opened) {
         if (bodyLockedRef.current) {
-          document.body.style.position = '';
-          document.body.style.width = '';
-          document.body.style.height = '';
+          if (isIOS) {
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+          } else if (isAndroid) {
+            document.body.style.overflow = '';
+          }
           window.scrollTo(0, previousScrollYRef.current);
           bodyLockedRef.current = false;
         }
@@ -77,6 +87,8 @@ function NormalImage({ item, index }: { item: ImageItem; index: number }) {
     <>
       <StyledImageContainer
         css={css`
+          flex-shrink: 0;
+
           @media ${landscapeQuery} {
             height: 100vh;
             height: 100dvh;

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { landscapeQuery } from 'utils/responsive';
+import { landscapeQuery, portraitQuery } from 'utils/responsive';
 
 const StyledContainer = styled.div`
   position: fixed;
@@ -15,6 +15,10 @@ const StyledContainer = styled.div`
   @media ${landscapeQuery} {
     --right-padding: calc(0.5 * env(safe-area-inset-right));
     right: var(--right-padding);
+  }
+  @media ${portraitQuery} {
+    --top-padding: env(safe-area-inset-top);
+    top: var(--top-padding);
   }
 
   z-index: 5;

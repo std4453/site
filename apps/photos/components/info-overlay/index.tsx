@@ -96,9 +96,18 @@ const StyledRoot = styled.div<{
     top: -1px;
     width: 100vw;
     height: calc(100vh + 2px);
-    height: calc(100svh + 2px);
+    /* iOS PWA 模式全屏高度要加上底部栏的横条 */
+    /* 已知问题：横条高度在切换锁定滚动之后会瞬间变为0，没法避免 */
+    height: calc(100vh + 2px + env(safe-area-inset-bottom));
+    height: calc(100dvh + 2px + env(safe-area-inset-bottom));
 
     z-index: 9;
+  }
+  /* https://stackoverflow.com/a/47818418/3871776 */
+  @supports (-webkit-touch-callout: none) {
+    @media ${portraitQuery} {
+      height: calc(100svh + 2px + env(safe-area-inset-bottom));
+    }
   }
   @media ${landscapeQuery} {
     left: -1px;
