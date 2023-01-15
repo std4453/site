@@ -576,6 +576,7 @@ class PinchZoom extends React.Component<Props> {
     const targetOffset = this._sanitizeOffset(this._offset, zoomFactor);
     const targetCenter = this._getCurrentZoomCenter(targetOffset, zoomFactor);
     const startCenter = this._getCurrentZoomCenter();
+
     const updateProgress = (progress: number) => {
       const scaleFactor =
         startZoomFactor + progress * (zoomFactor - startZoomFactor);
@@ -600,19 +601,41 @@ class PinchZoom extends React.Component<Props> {
     this._animate(updateProgress);
   }
 
+  /**
+   * 魔改之后，这个函数的功能和 _sanitizeOffsetAnimation 完全一致了，其实可以合并
+   * 成一个
+   */
   private _zoomOutAnimation() {
     if (this._zoomFactor === 1) {
       return;
     }
 
+    const size = this._getChildSize();
     const startZoomFactor = this._zoomFactor;
     const zoomFactor = 1;
-    const center = this._getCurrentZoomCenter();
+    const startCenter = this._getCurrentZoomCenter();
+    const targetOffset = this._sanitizeOffset(this._offset, zoomFactor);
+    const targetCenter = this._getCurrentZoomCenter(targetOffset, zoomFactor);
+
     const updateProgress = (progress: number) => {
       const scaleFactor =
         startZoomFactor + progress * (zoomFactor - startZoomFactor);
 
-      this._scaleTo(scaleFactor, center);
+      const centerX =
+        startCenter.x + progress * (targetCenter.x - startCenter.x);
+      const centerY =
+        startCenter.y + progress * (targetCenter.y - startCenter.y);
+
+      this._scaleZoomFactor(scaleFactor / this._zoomFactor);
+      this._offset = {
+        x:
+          centerX -
+          (size.width * this._getInitialZoomFactor() * scaleFactor) / 2,
+        y:
+          centerY -
+          (size.height * this._getInitialZoomFactor() * scaleFactor) / 2,
+      };
+      this._update({ isAnimation: true });
     };
 
     this._animate(updateProgress);
