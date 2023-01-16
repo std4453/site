@@ -39,7 +39,6 @@ export function InteractiveImage({
   const imgRef = useRef<HTMLDivElement>();
 
   const onUpdate = useMemoizedFn(({ x, y, scale }) => {
-    console.log('onUpdate', x, y, scale);
     if (!imgRef.current) {
       return;
     }
