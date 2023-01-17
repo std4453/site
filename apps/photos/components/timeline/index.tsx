@@ -135,7 +135,7 @@ function NormalImage({ item, index }: { item: ImageItem; index: number }) {
           quality={90}
           draggable="false"
           sizes="100vw"
-          priority={index < 3}
+          priority={index < 2}
         />
         {item.metadata && <Info metadata={item.metadata} />}
       </StyledImageContainer>
